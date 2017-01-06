@@ -1,0 +1,30 @@
+{
+  "name": "decl",
+  "version": "0.0.0",
+  "description": "Decl is a simple library designed to enable more declarative and unobtrusive JavaScript",
+  "main": "./dist/main.js",
+  "scripts": {
+    "test": "gulp test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anarchocurious/decl.git"
+  },
+  "author": "Alec Larsen <aleclarsen42@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "browserify": "^13.3.0",
+    "gulp": "^3.9.1",
+    "gulp-merge": "^0.1.1",
+    "gulp-rimraf": "^0.2.1",
+    "gulp-sourcemaps": "^1.9.1",
+    "gulp-typescript": "^3.1.4",
+    "gulp-uglify": "^2.0.0",
+    "gulp-util": "^3.0.8",
+    "tsify": "^3.0.0",
+    "typescript": "^2.1.4",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0",
+    "watchify": "^3.8.0"
+  }
+}
