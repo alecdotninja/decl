@@ -7,6 +7,7 @@ var browserify = require('browserify');
 var tsify = require('tsify');
 var uglify = require('gulp-uglify');
 var sourcemaps = require('gulp-sourcemaps');
+var Server = require('karma').Server;
 
 gulp.task('clean', function() {
   return gulp
@@ -38,6 +39,14 @@ gulp.task('build', function () {
     .pipe(gulp.dest('dist'));
 
     return merge(debug, min);
+});
+
+gulp.task('test', function (done) {
+    new Server({ configFile: __dirname + '/karma.conf.js', singleRun: true }, done).start();
+});
+
+gulp.task('tdd', function (done) {
+    new Server({ configFile: __dirname + '/karma.conf.js', singleRun: false }, done).start();
 });
 
 gulp.task('default', ['build']);
