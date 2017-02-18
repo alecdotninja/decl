@@ -1,0 +1,24 @@
+language: node_js
+
+node_js:
+  - '7.4'
+
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - g++-4.8
+
+cache:
+  directories:
+    - node_modules
+
+env:
+  global:
+    - CXX=g++-4.8
+    - SAUCE_USERNAME=decl
+    - secure: "EAtoz2mdyGvFT88KuDpP5w37LLdq+ZiIlaOayv1THit4gXCHw2s323dIdxvlXRqLrUZSWcqxM7CNsxE4kX1+eozqysUyDU5m+wjT9HcDT2Wt97gkdDvwDQeZb2bIRfWII7dkk40MbPvM0YgNwExsH7GnK6zK0IAO6/YEATf4ySPi6PDBNe6xuBW9aIvjOfEPcEGs9HGQuPUK9HyAKdtl0F8JFpgBPVw3g1TYVES36fgwJDXn80PUEGp8SYtK6yq2W8jZZ5C35UnNro5B6tEghgcjHNQnegyCHG9+EgUOwLuKGS+hFUBVIsWJd2BWvzuz54dsvLcya+kaMfh7lnpaQh7HM1Cfidp9ROB/Hbv64o2dk6y1afMdxvWWqI8Jzmm3zU8BAA4ndm2LmXdTa5d4gumM7Oj1NdIvdjjUk8E4rxZcY6rwMaStsg76zPNPZ7hz+fsZvDz2+mJFoYRnjYyj7cFhBUBxmBH0h7KggBPQm6MCpCg1A/Nr741Pd0G5of38KGzE7UfYvCrBsUOh45gzOqBGHo+uYwmlvE4WtS2Mfqg1g9kFP4koSkqNAWPbjBBkqlw/dXsrawFF8Xt4KB1fU5Gr1/9phYdW8nKwKgdefZ8fEPo8ejruOAZru5wdACq2WwEyzgVW115C2frCHc/Y0/H465f4jUP35K0kHEDOmjY="
+
+script:
+  - gulp ci
