@@ -1,6 +1,4 @@
-import { Scope, ScopeExecutor } from './scope';
-import { ElementMatcher } from './element_collector';
-import { EventMatcher, SubscriptionExecutor } from './subscriptions';
+import { Scope, ScopeExecutor, ElementMatcher, EventMatcher, SubscriptionExecutor } from './scope';
 
 export default Decl;
 
@@ -9,10 +7,6 @@ export class Decl {
 
     static select(matcher: ElementMatcher, executor: ScopeExecutor): Scope {
         return this.getDefaultInstance().select(matcher, executor);
-    }
-
-    static when(matcher: ElementMatcher, executor: ScopeExecutor): Scope {
-        return this.getDefaultInstance().when(matcher, executor);
     }
 
     static on(matcher: EventMatcher, executor: SubscriptionExecutor): Scope {
@@ -40,20 +34,16 @@ export class Decl {
         this.scope = Scope.buildRootScope(root);
     }
 
-    getScope(): Scope {
-        return this.scope;
-    }
-    
     select(matcher: ElementMatcher, executor: ScopeExecutor): Scope {
-        return this.scope.select(matcher, executor);
-    }
-
-    when(matcher: ElementMatcher, executor: ScopeExecutor): Scope {
-        return this.scope.when(matcher, executor);
+        return this.getScope().select(matcher, executor);
     }
 
     on(matcher: EventMatcher, executor: SubscriptionExecutor): Scope {
-        return this.scope.on(matcher, executor);
+        return this.getScope().on(matcher, executor);
+    }
+
+    getScope(): Scope {
+        return this.scope;
     }
 
     pristine(): void {
@@ -65,3 +55,5 @@ export class Decl {
 if(typeof(window) !== 'undefined') {
     (<any>window).Decl = Decl;
 }
+
+export { Scope, ScopeExecutor, ElementMatcher, EventMatcher, SubscriptionExecutor };

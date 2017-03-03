@@ -1,5 +1,6 @@
 import { Decl } from "../src/decl";
 import { expect } from "chai";
+import { Promise } from "es6-promise";
 
 describe('Decl', () => {
     beforeEach(() => { 
@@ -7,80 +8,93 @@ describe('Decl', () => {
         pristineDocument();
     });
 
-    describe('select', () => {
+    describe('.select', () => {
+        it('delegates to the default instance', () => {
+            return expectMethodToBeCalledBy(Decl.getDefaultInstance(), 'select', () => {
+                Decl.select('[data-match-me]', () => {});
+            });
+        });
+    });
+
+    describe('.on', () => {
+        it('delegates to the default instance', () => {
+            return expectMethodToBeCalledBy(Decl.getDefaultInstance(), 'on', () => {
+                Decl.on('click', () => {});
+            });
+        });
+    });
+
+    describe('.getDefaultInstance', () => {
+        context('when the default instance has been externally set', () => {
+            beforeEach(() => {
+                Decl.setDefaultInstance(new Decl(document.body));
+            });
+
+            it('returns the externally set default instance', () => {
+                expect(Decl.getDefaultInstance().getScope().getElement()).to.equal(document.body);
+            });
+        });
+
+        context('when the default instance has not been externally set', () => {
+            it('constructs a new default instance with the root of the document', () => {
+                expect(Decl.getDefaultInstance().getScope().getElement()).to.equal(document.documentElement);
+            });
+        });
+    });
+
+    describe('.setDefaultInstance', () => {
+        let defaultInstance = new Decl(document.body);
+
         beforeEach(() => {
-            Decl.select('[data-detect-me]', scope => {
-                scope.match(element => {
-                    element.innerHTML = 'detected';
-                });
-
-                scope.on('click', element => {
-                    element.innerHTML = 'clicked';
-                });
-            });
+            Decl.setDefaultInstance(defaultInstance);
         });
 
-        it('detects a matching and runs the callback at the next repaint', () => {
-            setContent('body', '<div data-detect-me></div>', () => {
-                expect(textOf('[data-detect-me]')).to.eq('detected');
-            });
+        it('sets the default instance', () => {
+            expect(Decl.getDefaultInstance()).to.equal(defaultInstance);
         });
+    });
 
-        it('correctly registers event handles', () => {
-            setContent('body', '<div data-detect-me></div>', () => {
-                simulateEvent('[data-detect-me]', 'click', () => {
-                    expect(textOf('[data-detect-me]')).to.eq('detected');                
-                });
+    describe('#select', () => {
+        it('delegates to the root scope', () => {
+            return expectMethodToBeCalledBy(Decl.getDefaultInstance().getScope(), 'select', () => {
+                Decl.getDefaultInstance().select('[data-match-me]', () => {});
             });
         });
+    });
+
+    describe('#on', () => {
+        it('delegates to the root scope', () => {
+            return expectMethodToBeCalledBy(Decl.getDefaultInstance().getScope(), 'on', () => {
+                Decl.getDefaultInstance().on('click', () => {});
+            });
+        });        
+    });
+
+    describe('#getScope', () => {
+        it('returns the root scope', () => {
+            expect(Decl.getDefaultInstance().getScope().getElement()).to.equal(document.documentElement);
+        });  
     });
 });
 
-function setContent(selector : string, htmlContent : string, thenCallback?: () => void): void {
-    let element = document.querySelector(selector);
-
-    if(element) {
-        element.innerHTML = htmlContent;
-    }
-    
-    if(thenCallback) {
-        waitForRepaint(thenCallback);
-    }
-}
-
-function simulateEvent(selector : string, eventName : string, thenCallback?: () => void): void {
-    let element = document.querySelector(selector);
-
-    if(element) {
-        let event = document.createEvent('Events');
-        event.initEvent(eventName, true, true);
-
-        element.dispatchEvent(event);
-    }
-
-    if(thenCallback) {
-        setTimeout(thenCallback, 0);
-    }
-}
-
-function waitForRepaint(callback: () => void): void {
-    // wait for the next repaint...
-    requestAnimationFrame(() => {
-        // ...but make sure that we are the *last* thing that happens        
-        setTimeout(callback, 0);
-    });
-}
-
-function textOf(selector : string) : string {
-    let element = document.querySelector(selector);
-
-    if(element) {
-        return element.textContent;
-    }else{
-        return null;
-    }
-}
-
-function pristineDocument() {
+function pristineDocument(): void {
     document.replaceChild(document.createElement('HTML'), document.documentElement);
+    document.documentElement.appendChild(document.createElement('HEAD'));
+    document.documentElement.appendChild(document.createElement('BODY'));
+}
+
+function expectMethodToBeCalledBy(object: Object, propertyName : string, executor: Function): Promise<null> {
+    return new Promise(function(resolve) {
+        let original: Function = (<any>object)[propertyName];
+
+        (<any>object)[propertyName] = function(): any {
+            let returnValue: any = original.apply(this, arguments);
+
+            resolve();
+
+            return returnValue;
+        };
+
+        return executor();
+    });
 }

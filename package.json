@@ -15,10 +15,12 @@
   "license": "MIT",
   "devDependencies": {
     "@types/chai": "^3.4.34",
+    "@types/core-js": "^0.9.35",
     "@types/mocha": "^2.2.36",
     "@types/sinon": "^1.16.34",
     "browserify": "^13.3.0",
     "chai": "^3.5.0",
+    "es6-promise": "^4.0.5",
     "gulp": "^3.9.1",
     "gulp-merge": "^0.1.1",
     "gulp-rimraf": "^0.2.1",

@@ -54,6 +54,13 @@ gulp.task('test', function (done) {
     });
 });
 
+gulp.task('tdd', function (done) {
+    return karma({
+        configFile: __dirname + '/karma.conf.js', 
+        singleRun: false
+    });
+});
+
 gulp.task('ci', function() {
     return Promise.resolve()
     .then(function() {

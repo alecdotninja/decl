@@ -1,9 +1,8 @@
-export default Scope;
-
-import { ElementMatcher } from './element_collector';
-import { SubscriptionExecutor, Subscription, TrivialSubscription, EventMatcher, EventSubscription, MatchingElementsChangedEvent, MatchingElementsSubscription, ElementMatchesSubscription, ElementMatchsChangedEvent } from './subscriptions';
-
-export interface ScopeExecutor { (scope: Scope): void };
+import { Subscription, SubscriptionExecutor } from './subscriptions/subscription';
+import { TrivialSubscription } from './subscriptions/trivial_subscription';
+import { MatchingElementsSubscription, MatchingElementsChangedEvent } from './subscriptions/matching_elements_subscription';
+import { ElementMatchesSubscription, ElementMatchesChangedEvent, ElementMatcher } from './subscriptions/element_matches_subscription';
+import { EventSubscription, EventMatcher } from './subscriptions/event_subscription';
 
 export class Scope {
     static buildRootScope(element: Element): Scope {
@@ -137,7 +136,7 @@ export class Scope {
     private buildWhenExecutor(executor: ScopeExecutor): SubscriptionExecutor {
         let scope : Scope = null;
 
-        return (element: Element, event: ElementMatchsChangedEvent) => {
+        return (element: Element, event: ElementMatchesChangedEvent) => {
             if(event.isMatching) {
                 scope = new Scope(this.element, executor);
                 scope.activate();
@@ -148,3 +147,6 @@ export class Scope {
         };
     }
 }
+
+export interface ScopeExecutor { (scope: Scope): void };
+export { ElementMatcher, EventMatcher, SubscriptionExecutor };
