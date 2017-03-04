@@ -90,7 +90,7 @@ gulp.task('ci', function() {
         return karma({
             configFile: __dirname + '/karma.conf.js', 
             singleRun: true,
-            reporters: ['saucelabs'],            
+            reporters: ['dots', 'saucelabs'],            
             browsers: Object.keys(customLaunchers),
             customLaunchers: customLaunchers,
             sauceLabs: {
@@ -131,7 +131,7 @@ gulp.task('ci', function() {
         return karma({
             configFile: __dirname + '/karma.conf.js', 
             singleRun: true,
-            reporters: ['saucelabs'],            
+            reporters: ['dots', 'saucelabs'],            
             browsers: Object.keys(customLaunchers),
             customLaunchers: customLaunchers,
             sauceLabs: {
@@ -169,7 +169,7 @@ gulp.task('ci', function() {
         return karma({
             configFile: __dirname + '/karma.conf.js', 
             singleRun: true,
-            reporters: ['saucelabs'],
+            reporters: ['dots', 'saucelabs'],
             browsers: Object.keys(customLaunchers),
             customLaunchers: customLaunchers,
             sauceLabs: {
