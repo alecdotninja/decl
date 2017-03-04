@@ -75,7 +75,7 @@ Decl.select('.counting-widget', function(scope) {
 
 ## Development
 
-This project is setup using a bunch of tools -- most of which [I don't really understand](https://hackernoon.com/how-it-feels-to-learn-javascript-in-2016-d3a717dd577f). Fortunately, cloning this repo and running `npm install` from the project root on [a standard Node setup](https://nodejs.org/) seems to be sufficent to the toolchain working.
+This project is setup using a bunch of tools -- most of which [I don't really understand](https://hackernoon.com/how-it-feels-to-learn-javascript-in-2016-d3a717dd577f). Fortunately, cloning this repo and running `npm install` from the project root on [a standard Node setup](https://nodejs.org/) seems to be sufficent to get the toolchain up and working.
 
 The source is written in [TypeScript](https://www.typescriptlang.org/) and located in the `src` folder. The browser-ready JavaScript ends up in `dist` and can be generated with `gulp build`. The specs are in `test` and can be verified with `gulp test`.
 
