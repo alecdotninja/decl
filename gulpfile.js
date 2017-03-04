@@ -74,7 +74,7 @@ gulp.task('ci', function() {
                 sl_chrome: {
                     base: 'SauceLabs',
                     browserName: 'chrome',
-                    platform: 'Windows 7'
+                    platform: 'Windows 10'
                 },
                 sl_firefox: {
                     base: 'SauceLabs',
@@ -90,7 +90,8 @@ gulp.task('ci', function() {
         return karma({
             configFile: __dirname + '/karma.conf.js', 
             singleRun: true,
-            reporters: ['dots', 'saucelabs'],            
+            concurrency: 1,
+            reporters: ['mocha', 'saucelabs'],            
             browsers: Object.keys(customLaunchers),
             customLaunchers: customLaunchers,
             sauceLabs: {
@@ -131,7 +132,8 @@ gulp.task('ci', function() {
         return karma({
             configFile: __dirname + '/karma.conf.js', 
             singleRun: true,
-            reporters: ['dots', 'saucelabs'],            
+            concurrency: 1,
+            reporters: ['mocha', 'saucelabs'],            
             browsers: Object.keys(customLaunchers),
             customLaunchers: customLaunchers,
             sauceLabs: {
@@ -169,6 +171,7 @@ gulp.task('ci', function() {
         return karma({
             configFile: __dirname + '/karma.conf.js', 
             singleRun: true,
+            concurrency: 1,
             reporters: ['dots', 'saucelabs'],
             browsers: Object.keys(customLaunchers),
             customLaunchers: customLaunchers,
