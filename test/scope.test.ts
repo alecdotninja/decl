@@ -338,7 +338,7 @@ function setAttribute(selector : string, attributeName: string, attribueValue: s
 
         if(element) {
         element.setAttribute(attributeName, attribueValue);
-        return repaint();
+        return waitForRepaint();
     }else{
         return Promise.reject('Cannot change attribue ' + attributeName + ' of ' + selector + ' to ' + attribueValue);
     }
@@ -349,7 +349,7 @@ function setContent(selector : string, htmlContent : string): Promise<null> {
 
     if(element) {
         element.innerHTML = htmlContent;
-        return repaint();
+        return waitForRepaint();
     }else{
         return Promise.reject('Cannot set content of ' + selector);
     }
@@ -364,19 +364,15 @@ function simulateEvent(selector : string, eventName : string): Promise<null> {
 
         element.dispatchEvent(event);
 
-        return repaint();
+        return waitForRepaint();
     }else{
         return Promise.reject('Cannot simulate ' + eventName + ' on ' + selector);
     }
 }
 
-function repaint(): Promise<null> {
+function waitForRepaint(): Promise<null> {
     return new Promise(function(resolve) {
-        requestAnimationFrame(() => {
-            setTimeout(() => {
-                requestAnimationFrame(resolve);
-            }, 0);
-        });
+        setTimeout(resolve, 100);  
     });
 }
 
