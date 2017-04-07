@@ -158,7 +158,12 @@ export class Scope {
             }
 
             if(this.childScopes.length > 0) {
-                console.warn('bug detected', this, 'is trying to deactivate with leftover children', this.childScopes);
+                console.warn('Bug detected!', this, 'is trying to deactivate with leftover children', this.childScopes, '! Recovering...');
+
+                let childScope;
+                while(childScope = this.childScopes[0]) {
+                    this.destroyChildScope(childScope);
+                }
             }
 
             this.isActivated = false;            
