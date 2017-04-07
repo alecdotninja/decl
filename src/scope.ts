@@ -21,8 +21,9 @@ export class Scope {
     private isActivated: boolean = false;
     private subscriptions: Subscription[] = [];
 
-    constructor(parent: Scope, name: string, element: Element, executor?: ScopeExecutor) {
-        this.parentScope = parent;
+    constructor(parentScope: Scope, name: string, element: Element, executor?: ScopeExecutor) {
+        this.parentScope = parentScope;
+        this.name = name;
         this.element = element;
 
         if(executor) {
@@ -49,19 +50,23 @@ export class Scope {
     }
 
     drawTree(): string {
-        let parts: string[] = [];
+        return this.drawTreeLines().join('\n');
+    }
 
-        parts.push(this.name, ' {\n');
+    drawTreeLines(): string[] {
+        let lines: string[] = [];
+
+        lines.push(this.name + ' {');
 
         for(let scope of this.childScopes) {
-            for(let line of scope.drawTree().split('\n')) {
-                parts.push('\t', line, '\n');
+            for(let line of scope.drawTreeLines()) {
+                lines.push('\t' + line);
             }
         }
 
-        parts.push('}\n');
+        lines.push('}');
 
-        return parts.join('');
+        return lines;
     }
 
     getElement(): Element {
