@@ -42,7 +42,7 @@ export class ElementMatchesSubscription extends BatchedMutationSubscription {
         if(wasMatchingElement !== isMatchingElement) {
             let event = new ElementMatchesChangedEvent(this, isMatchingElement);
 
-            this.executor(this.element, event);
+            this.executor(event, this.element);
         }
     }
 
@@ -52,13 +52,11 @@ export class ElementMatchesSubscription extends BatchedMutationSubscription {
 }
 
 export class ElementMatchesChangedEvent extends SubscriptionEvent {
-    readonly elementMatchesSubscription: ElementMatchesSubscription;
     readonly isMatching: boolean;
 
     constructor(elementMatchesSubscription: ElementMatchesSubscription, isMatching: boolean) {
-        super('ElementMatchesChangedEvent')
+        super(elementMatchesSubscription, 'ElementMatchesChangedEvent');
 
-        this.elementMatchesSubscription = elementMatchesSubscription;
         this.isMatching = isMatching;
     }
 }

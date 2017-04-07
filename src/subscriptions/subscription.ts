@@ -12,13 +12,15 @@ export abstract class Subscription {
 }
 
 export interface SubscriptionExecutor { 
-    (element: Element, event?: Event | SubscriptionEvent): void 
+    (event: Event | SubscriptionEvent, element: Element): void 
 }
 
 export class SubscriptionEvent {
-    readonly name : string;
+    readonly subscription: Subscription;
+    readonly name: string;
 
-    constructor(name : string) {
+    constructor(subscription: Subscription, name: string) {
+        this.subscription = subscription;
         this.name = name;
     }
 }

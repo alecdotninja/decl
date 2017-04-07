@@ -39,7 +39,7 @@ export class EventSubscription extends Subscription {
     }
 
     private handleEvent(event: Event): void {
-        this.executor(this.element, event);         
+        this.executor(event, this.element);         
     }
 
     private parseEventMatcher(eventMatcher: EventMatcher): string[] {

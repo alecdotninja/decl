@@ -46,7 +46,7 @@ export class MatchingElementsSubscription extends BatchedMutationSubscription {
         if(addedElements.length > 0 || removedElements.length > 0) {
             let event = new MatchingElementsChangedEvent(this, addedElements, removedElements);
 
-            this.executor(this.element, event);
+            this.executor(event, this.element);
         }
     }
 
@@ -56,14 +56,12 @@ export class MatchingElementsSubscription extends BatchedMutationSubscription {
 }
 
 export class MatchingElementsChangedEvent extends SubscriptionEvent {
-    readonly matchingElementsSubscription: MatchingElementsSubscription;
     readonly addedElements: Element[];
     readonly removedElements: Element[];
 
     constructor(matchingElementsSubscription: MatchingElementsSubscription, addedElements: Element[], removedElements: Element[]) {
-        super('MatchingElementsChanged')
+        super(matchingElementsSubscription, 'MatchingElementsChanged');
 
-        this.matchingElementsSubscription = matchingElementsSubscription;
         this.addedElements = addedElements;
         this.removedElements = removedElements;
     }

@@ -22,7 +22,7 @@ export class Scope {
         this.element = element;
 
         if(executor) {
-            executor.call(this, this);
+            executor.call(this, this, this.element);
         }
     }
 
@@ -110,7 +110,7 @@ export class Scope {
     private buildSelectExecutor(executor: ScopeExecutor): SubscriptionExecutor {
         let scopes: Scope[] = [];
 
-        return (element: Element, event: MatchingElementsChangedEvent) => {
+        return (event: MatchingElementsChangedEvent, element: Element) => {
             for(let element of event.addedElements) {
                 let scope = new Scope(element, executor);
 
@@ -136,7 +136,7 @@ export class Scope {
     private buildWhenExecutor(executor: ScopeExecutor): SubscriptionExecutor {
         let scope : Scope = null;
 
-        return (element: Element, event: ElementMatchesChangedEvent) => {
+        return (event: ElementMatchesChangedEvent, element: Element) => {
             if(event.isMatching) {
                 scope = new Scope(this.element, executor);
                 scope.activate();
@@ -148,5 +148,5 @@ export class Scope {
     }
 }
 
-export interface ScopeExecutor { (scope: Scope): void };
+export interface ScopeExecutor { (scope: Scope, element: Element): void };
 export { ElementMatcher, EventMatcher, SubscriptionExecutor };

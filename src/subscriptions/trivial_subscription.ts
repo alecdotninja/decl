@@ -1,8 +1,20 @@
-import { Subscription, SubscriptionExecutor } from './subscription';
+import { Subscription, SubscriptionExecutor, SubscriptionEvent } from './subscription';
 
 export interface TrivialSubscriptionConfiguration {
     connected?: boolean,
     disconnected?: boolean
+}
+
+export class ElementConnectionChangedEvent extends SubscriptionEvent {
+    readonly element: Element;
+    readonly isConnected: boolean;
+
+    constructor(trivialSubscription: TrivialSubscription, element: Element, isConnected: boolean) {
+        super(trivialSubscription, 'ElementConnected');
+
+        this.element = element;
+        this.isConnected = isConnected;
+    }
 }
 
 export class TrivialSubscription extends Subscription {
@@ -20,7 +32,7 @@ export class TrivialSubscription extends Subscription {
             this.isConnected = true;
 
             if(this.config.connected) {
-                this.executor(this.element);            
+                this.executor(this.buildElementConnectionChangedEvent(), this.element); 
             }
         }
     }
@@ -30,8 +42,12 @@ export class TrivialSubscription extends Subscription {
             this.isConnected = false;
 
             if(this.config.disconnected) {
-                this.executor(this.element);            
+                this.executor(this.buildElementConnectionChangedEvent(), this.element);     
             }
         }
+    }
+    
+    private buildElementConnectionChangedEvent(): ElementConnectionChangedEvent {
+        return new ElementConnectionChangedEvent(this, this.element, this.isConnected);
     }
 }
