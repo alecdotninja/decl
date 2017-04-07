@@ -56,7 +56,7 @@ export class Scope {
     drawTreeLines(): string[] {
         let lines: string[] = [];
 
-        let self = this.name + '  (' + this.subscriptions.length + ')';
+        let self = this.name + ' (' + this.subscriptions.length + ')';
 
         if(this.childScopes.length > 0) {
             lines.push(self + ' {');
@@ -155,6 +155,10 @@ export class Scope {
         if(this.isActivated) {
             for(let subscription of this.subscriptions) {
                 subscription.disconnect();
+            }
+
+            if(this.childScopes.length > 0) {
+                console.warn('bug detected', this, 'is trying to deactivate with leftover children', this.childScopes);
             }
 
             this.isActivated = false;            
