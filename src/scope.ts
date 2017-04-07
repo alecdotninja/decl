@@ -56,15 +56,21 @@ export class Scope {
     drawTreeLines(): string[] {
         let lines: string[] = [];
 
-        lines.push(this.name + ' {');
+        let self = this.name + '(' + this.subscriptions.length + ' subscriptions)';
 
-        for(let scope of this.childScopes) {
-            for(let line of scope.drawTreeLines()) {
-                lines.push('\t' + line);
+        if(this.childScopes.length > 0) {
+            lines.push(self + ' {');
+
+            for(let scope of this.childScopes) {
+                for(let line of scope.drawTreeLines()) {
+                    lines.push('\t' + line);
+                }
             }
-        }
 
-        lines.push('}');
+            lines.push('}');
+        }else{
+            lines.push(self);
+        }
 
         return lines;
     }
@@ -203,7 +209,7 @@ export class Scope {
 
         return (event: ElementMatchesChangedEvent, element: Element) => {
             if(event.isMatching) {
-                scope = this.createChildScope(name, this.element, executor);
+                scope = this.createChildScope('&( ' + name + ' )', this.element, executor);
             }else{
                 this.destroyChildScope(scope);
                 scope = null;
