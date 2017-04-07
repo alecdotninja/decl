@@ -13,19 +13,38 @@ export class Scope {
         return scope;
     }
 
-    private readonly parent: Scope;
+    private readonly parentScope: Scope;
+    private readonly childScopes: Scope[] = [];    
     private readonly element: Element;
+
     private isActivated: boolean = false;
     private subscriptions: Subscription[] = [];
-    private children: Scope[] = [];
 
     constructor(parent: Scope, element: Element, executor?: ScopeExecutor) {
-        this.parent = parent;
+        this.parentScope = parent;
         this.element = element;
 
         if(executor) {
             executor.call(this, this, this.element);
         }
+    }
+
+    getParentScope(): Scope {
+        return this.parentScope;
+    }
+
+    getChildScopes(): Scope[] {
+        return this.childScopes;
+    }
+
+    collectDescendantScopes(): Scope[] {
+        let scopes: Scope[] = [];
+
+        for(let scope of this.childScopes) {
+            scopes.push(scope, ...scope.collectDescendantScopes());
+        }
+
+        return scopes;
     }
 
     getElement(): Element {
@@ -172,7 +191,7 @@ export class Scope {
 
     private createChildScope(element: Element, executor?: ScopeExecutor): Scope {
         let scope = new Scope(this, element, executor);
-        this.children.push(scope);
+        this.childScopes.push(scope);
 
         scope.activate();
 
@@ -180,12 +199,12 @@ export class Scope {
     }
 
     private destroyChildScope(scope: Scope) {
-        let index = this.children.indexOf(scope);
+        let index = this.childScopes.indexOf(scope);
 
         scope.deactivate();
 
         if(index >= 0) {
-            this.children.splice(index, 1);
+            this.childScopes.splice(index, 1);
         }
     }
 }

@@ -13,6 +13,14 @@ export class Decl {
         return this.getDefaultInstance().on(matcher, executor);
     }
 
+    static getRootScope(): Scope {
+        return this.getDefaultInstance().getRootScope();
+    }
+
+    static collectScopes(): Scope[] {
+        return this.getDefaultInstance().collectScopes();
+    }
+
     static getDefaultInstance() : Decl {
         return this.defaultInstance || (this.defaultInstance = new Decl(document.documentElement));
     }
@@ -35,15 +43,19 @@ export class Decl {
     }
 
     select(matcher: ElementMatcher, executor: ScopeExecutor): Scope {
-        return this.getScope().select(matcher, executor);
+        return this.scope.select(matcher, executor);
     }
 
     on(matcher: EventMatcher, executor: SubscriptionExecutor): Scope {
-        return this.getScope().on(matcher, executor);
+        return this.scope.on(matcher, executor);
     }
 
-    getScope(): Scope {
+    getRootScope(): Scope {
         return this.scope;
+    }
+    
+    collectScopes(): Scope[] {
+        return [this.scope, ...this.scope.collectDescendantScopes()];
     }
 
     pristine(): void {

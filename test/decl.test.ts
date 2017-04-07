@@ -31,13 +31,13 @@ describe('Decl', () => {
             });
 
             it('returns the externally set default instance', () => {
-                expect(Decl.getDefaultInstance().getScope().getElement()).to.equal(document.body);
+                expect(Decl.getDefaultInstance().getRootScope().getElement()).to.equal(document.body);
             });
         });
 
         context('when the default instance has not been externally set', () => {
             it('constructs a new default instance with the root of the document', () => {
-                expect(Decl.getDefaultInstance().getScope().getElement()).to.equal(document.documentElement);
+                expect(Decl.getDefaultInstance().getRootScope().getElement()).to.equal(document.documentElement);
             });
         });
     });
@@ -56,7 +56,7 @@ describe('Decl', () => {
 
     describe('#select', () => {
         it('delegates to the root scope', () => {
-            return expectMethodToBeCalledBy(Decl.getDefaultInstance().getScope(), 'select', () => {
+            return expectMethodToBeCalledBy(Decl.getDefaultInstance().getRootScope(), 'select', () => {
                 Decl.getDefaultInstance().select('[data-match-me]', () => {});
             });
         });
@@ -64,7 +64,7 @@ describe('Decl', () => {
 
     describe('#on', () => {
         it('delegates to the root scope', () => {
-            return expectMethodToBeCalledBy(Decl.getDefaultInstance().getScope(), 'on', () => {
+            return expectMethodToBeCalledBy(Decl.getDefaultInstance().getRootScope(), 'on', () => {
                 Decl.getDefaultInstance().on('click', () => {});
             });
         });        
@@ -72,7 +72,7 @@ describe('Decl', () => {
 
     describe('#getScope', () => {
         it('returns the root scope', () => {
-            expect(Decl.getDefaultInstance().getScope().getElement()).to.equal(document.documentElement);
+            expect(Decl.getDefaultInstance().getRootScope().getElement()).to.equal(document.documentElement);
         });  
     });
 });
