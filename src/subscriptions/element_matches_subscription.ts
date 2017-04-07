@@ -24,8 +24,8 @@ export class ElementMatchesSubscription extends BatchedMutationSubscription {
 
     disconnect(): void {
         if(this.isConnected) {
-            this.updateIsMatchingElement(false);
             this.stopListening();
+            this.updateIsMatchingElement(false);
 
             this.isConnected = false;
         }        

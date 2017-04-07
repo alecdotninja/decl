@@ -49,30 +49,19 @@ export class Scope {
         return scopes;
     }
 
-    drawTree(): string {
-        return this.drawTreeLines().join('\n');
-    }
+    drawTree(): void {
+        console.groupCollapsed(this.name);
 
-    drawTreeLines(): string[] {
-        let lines: string[] = [];
+        try {
+            console.log('Element:', this.element);
+            console.log('Subscriptions:', this.subscriptions);
 
-        let self = this.name + ' (' + this.subscriptions.length + ')';
-
-        if(this.childScopes.length > 0) {
-            lines.push(self + ' {');
-
-            for(let scope of this.childScopes) {
-                for(let line of scope.drawTreeLines()) {
-                    lines.push('\t' + line);
-                }
+            for(let childScope of this.childScopes) {
+                childScope.drawTree();
             }
-
-            lines.push('}');
-        }else{
-            lines.push(self);
+        }finally{
+            console.groupEnd();
         }
-
-        return lines;
     }
 
     getElement(): Element {

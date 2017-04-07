@@ -21,8 +21,8 @@ export class Decl {
         return this.getDefaultInstance().collectScopes();
     }
 
-    static drawTree(): string {
-        return this.getDefaultInstance().drawTree();
+    static drawTree(): void {
+        this.getDefaultInstance().drawTree();
     }
 
     static getDefaultInstance() : Decl {
@@ -62,8 +62,8 @@ export class Decl {
         return [this.scope, ...this.scope.collectDescendantScopes()];
     }
 
-    drawTree(): string {
-        return this.scope.drawTree();
+    drawTree(): void {
+        this.scope.drawTree();
     }
 
     pristine(): void {
