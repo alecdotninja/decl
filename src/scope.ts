@@ -56,7 +56,7 @@ export class Scope {
     drawTreeLines(): string[] {
         let lines: string[] = [];
 
-        let self = this.name + '(' + this.subscriptions.length + ' subscriptions)';
+        let self = this.name + '  (' + this.subscriptions.length + ')';
 
         if(this.childScopes.length > 0) {
             lines.push(self + ' {');
@@ -209,7 +209,7 @@ export class Scope {
 
         return (event: ElementMatchesChangedEvent, element: Element) => {
             if(event.isMatching) {
-                scope = this.createChildScope('&( ' + name + ' )', this.element, executor);
+                scope = this.createChildScope('&' + name, this.element, executor);
             }else{
                 this.destroyChildScope(scope);
                 scope = null;
