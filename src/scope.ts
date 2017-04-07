@@ -53,9 +53,15 @@ export class Scope {
         console.groupCollapsed(this.name);
 
         try {
-            console.log('Element:', this.element);
-            console.log('Subscriptions:', this.subscriptions);
+            console.info('Element', this.element);
+            console.info('Subscriptions', this.subscriptions);
 
+            for(let subscription of this.subscriptions) {
+                if(subscription instanceof EventSubscription) {
+                    console.log(subscription.eventMatcher, '(', subscription.eventNames, ') fires', subscription.executor);
+                }
+            }
+            
             for(let childScope of this.childScopes) {
                 childScope.drawTree();
             }

@@ -1,6 +1,6 @@
 export abstract class Subscription {
-    protected readonly executor: SubscriptionExecutor;
-    protected readonly element: Element;
+    readonly executor: SubscriptionExecutor;
+    readonly element: Element;
     
     constructor(element: Element, executor: SubscriptionExecutor) {
         this.element = element;

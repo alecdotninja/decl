@@ -2,10 +2,10 @@ import { Subscription, SubscriptionExecutor } from './subscription';
 
 export class EventSubscription extends Subscription {
     readonly eventMatcher: EventMatcher;
+    readonly eventNames: string[];
 
     private isConnected : boolean = false;    
     private readonly eventListener: EventListener;
-    private readonly eventNames: string[];
 
     constructor(element: Element, eventMatcher: EventMatcher, executor: SubscriptionExecutor) {
         super(element, executor);
