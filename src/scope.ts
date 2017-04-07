@@ -157,13 +157,10 @@ export class Scope {
                 subscription.disconnect();
             }
 
-            if(this.childScopes.length > 0) {
-                console.warn('Bug detected!', this, 'is trying to deactivate with leftover children', this.childScopes, '! Recovering...');
-
-                let childScope;
-                while(childScope = this.childScopes[0]) {
-                    this.destroyChildScope(childScope);
-                }
+            let orphanedChildScope;
+            while(orphanedChildScope = this.childScopes[0]) {
+                console.warn('Decl bug!', this, 'attempted to deactivate without cleaning up', orphanedChildScope);
+                this.destroyChildScope(orphanedChildScope);
             }
 
             this.isActivated = false;            

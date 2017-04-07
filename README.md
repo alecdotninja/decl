@@ -16,6 +16,9 @@ I've tried to select a diverse range of browsers and platforms for maximum cover
 
 ## Usage
 
+[Here](https://jsfiddle.net/v4nsbj4t/) is a live example.
+
+
 ```javascript
 
 Decl.select('body.accounts-index', function(scope) {
