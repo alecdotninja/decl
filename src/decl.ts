@@ -21,6 +21,10 @@ export class Decl {
         return this.getDefaultInstance().collectScopes();
     }
 
+    static drawTree(): string {
+        return this.getDefaultInstance().drawTree();
+    }
+
     static getDefaultInstance() : Decl {
         return this.defaultInstance || (this.defaultInstance = new Decl(document.documentElement));
     }
@@ -56,6 +60,10 @@ export class Decl {
     
     collectScopes(): Scope[] {
         return [this.scope, ...this.scope.collectDescendantScopes()];
+    }
+
+    drawTree(): string {
+        return this.scope.drawTree();
     }
 
     pristine(): void {

@@ -6,7 +6,7 @@ import { EventSubscription, EventMatcher } from './subscriptions/event_subscript
 
 export class Scope {
     static buildRootScope(element: Element): Scope {
-        let scope = new Scope(null, element);
+        let scope = new Scope(null, '<<root>>', element, null);
 
         scope.activate();
 
@@ -16,11 +16,12 @@ export class Scope {
     private readonly parentScope: Scope;
     private readonly childScopes: Scope[] = [];    
     private readonly element: Element;
+    private readonly name: string;
 
     private isActivated: boolean = false;
     private subscriptions: Subscription[] = [];
 
-    constructor(parent: Scope, element: Element, executor?: ScopeExecutor) {
+    constructor(parent: Scope, name: string, element: Element, executor?: ScopeExecutor) {
         this.parentScope = parent;
         this.element = element;
 
@@ -47,6 +48,22 @@ export class Scope {
         return scopes;
     }
 
+    drawTree(): string {
+        let parts: string[] = [];
+
+        parts.push(this.name, ' {\n');
+
+        for(let scope of this.childScopes) {
+            for(let line of scope.drawTree().split('\n')) {
+                parts.push('\t', line, '\n');
+            }
+        }
+
+        parts.push('}\n');
+
+        return parts.join('');
+    }
+
     getElement(): Element {
         return this.element;
     }
@@ -64,13 +81,13 @@ export class Scope {
     }
 
     select(matcher: ElementMatcher, executor: ScopeExecutor): Scope {
-        this.addSubscription(new MatchingElementsSubscription(this.element, matcher, this.buildSelectExecutor(executor)));
+        this.addSubscription(new MatchingElementsSubscription(this.element, matcher, this.buildSelectExecutor(String(matcher), executor)));
 
         return this;
     }
 
     when(matcher: ElementMatcher, executor: ScopeExecutor): Scope {
-		this.addSubscription(new ElementMatchesSubscription(this.element, matcher, this.buildWhenExecutor(executor)));
+		this.addSubscription(new ElementMatchesSubscription(this.element, matcher, this.buildWhenExecutor(String(matcher), executor)));
 
         return this;
     }
@@ -151,12 +168,12 @@ export class Scope {
         }
     }
 
-    private buildSelectExecutor(executor: ScopeExecutor): SubscriptionExecutor {
+    private buildSelectExecutor(name: string, executor: ScopeExecutor): SubscriptionExecutor {
         let scopes: Scope[] = [];
 
         return (event: MatchingElementsChangedEvent, element: Element) => {
             for(let element of event.addedElements) {
-                let scope = this.createChildScope(element, executor);
+                let scope = this.createChildScope(name, element, executor);
 
                 scopes.push(scope);
             }
@@ -176,12 +193,12 @@ export class Scope {
         };
     }
 
-    private buildWhenExecutor(executor: ScopeExecutor): SubscriptionExecutor {
+    private buildWhenExecutor(name: string, executor: ScopeExecutor): SubscriptionExecutor {
         let scope : Scope = null;
 
         return (event: ElementMatchesChangedEvent, element: Element) => {
             if(event.isMatching) {
-                scope = this.createChildScope(this.element, executor);
+                scope = this.createChildScope(name, this.element, executor);
             }else{
                 this.destroyChildScope(scope);
                 scope = null;
@@ -189,8 +206,8 @@ export class Scope {
         };
     }
 
-    private createChildScope(element: Element, executor?: ScopeExecutor): Scope {
-        let scope = new Scope(this, element, executor);
+    private createChildScope(name: string, element: Element, executor?: ScopeExecutor): Scope {
+        let scope = new Scope(this, name, element, executor);
         this.childScopes.push(scope);
 
         scope.activate();
