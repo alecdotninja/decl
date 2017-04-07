@@ -6,19 +6,21 @@ import { EventSubscription, EventMatcher } from './subscriptions/event_subscript
 
 export class Scope {
     static buildRootScope(element: Element): Scope {
-        let scope = new Scope(element);
+        let scope = new Scope(null, element);
 
         scope.activate();
 
         return scope;
     }
 
+    private readonly parent: Scope;
     private readonly element: Element;
     private isActivated: boolean = false;
     private subscriptions: Subscription[] = [];
     private children: Scope[] = [];
 
-    constructor(element: Element, executor?: ScopeExecutor) {
+    constructor(parent: Scope, element: Element, executor?: ScopeExecutor) {
+        this.parent = parent;
         this.element = element;
 
         if(executor) {
@@ -135,10 +137,9 @@ export class Scope {
 
         return (event: MatchingElementsChangedEvent, element: Element) => {
             for(let element of event.addedElements) {
-                let scope = new Scope(element, executor);
+                let scope = this.createChildScope(element, executor);
 
-                scopes.push(scope);	
-                scope.activate();
+                scopes.push(scope);
             }
 
             for(let element of event.removedElements) {
@@ -146,7 +147,7 @@ export class Scope {
                     scope = scopes[index];
 
                     if(scope.element === element) {
-                        scope.deactivate();
+                        this.destroyChildScope(scope);
                         
                         scopes.splice(index, 1);
                         break;
@@ -161,13 +162,31 @@ export class Scope {
 
         return (event: ElementMatchesChangedEvent, element: Element) => {
             if(event.isMatching) {
-                scope = new Scope(this.element, executor);
-                scope.activate();
+                scope = this.createChildScope(this.element, executor);
             }else{
-                scope.deactivate();
+                this.destroyChildScope(scope);
                 scope = null;
             }
         };
+    }
+
+    private createChildScope(element: Element, executor?: ScopeExecutor): Scope {
+        let scope = new Scope(this, element, executor);
+        this.children.push(scope);
+
+        scope.activate();
+
+        return scope;
+    }
+
+    private destroyChildScope(scope: Scope) {
+        let index = this.children.indexOf(scope);
+
+        scope.deactivate();
+
+        if(index >= 0) {
+            this.children.splice(index, 1);
+        }
     }
 }
 

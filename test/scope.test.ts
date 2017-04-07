@@ -9,7 +9,7 @@ describe('Scope', () => {
     });
 
     it('is initalized with a matched element', () => {
-        let scope = new Scope(document.documentElement);
+        let scope = new Scope(null, document.documentElement);
 
         expect(scope.getElement()).to.be.an.instanceof(Element);
     });
@@ -17,7 +17,7 @@ describe('Scope', () => {
     it('invokes the scope executor during initialization', () => {
         let didRunExecutorDuringInitalization = false;
 
-        let scope = new Scope(document.documentElement, () => {
+        let scope = new Scope(null, document.documentElement, () => {
             didRunExecutorDuringInitalization = true;
         });
 
