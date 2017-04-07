@@ -54,12 +54,35 @@ export class Scope {
         return this;
     }
 
-    on(matcher: EventMatcher, executor: SubscriptionExecutor): Scope {
-        this.addSubscription(new EventSubscription(this.element, matcher, executor));
+    on(eventMatcher: EventMatcher, executor: SubscriptionExecutor): Scope;
+    on(eventMatcher: EventMatcher, elementMatcher: ElementMatcher, executor: SubscriptionExecutor): Scope;
+    on(eventMatcher: EventMatcher, executorOrElementMatcher: SubscriptionExecutor | ElementMatcher, maybeExecutor?: SubscriptionExecutor): Scope {
+        let argumentsCount = arguments.length;
+
+        switch(argumentsCount) {
+            case 2:
+                return this.onWithTwoArguments(eventMatcher, <SubscriptionExecutor>executorOrElementMatcher);
+            case 3:
+                return this.onWithThreeArguments(eventMatcher, <ElementMatcher>executorOrElementMatcher, <SubscriptionExecutor>maybeExecutor);
+            default:
+                throw new TypeError("Failed to execute 'on' on 'Scope': 2 or 3 arguments required, but " + argumentsCount + " present.");
+        }
+    }
+
+    private onWithTwoArguments(eventMatcher: EventMatcher, executor: SubscriptionExecutor): Scope {
+        this.addSubscription(new EventSubscription(this.element, eventMatcher, executor));
 
         return this;
     }
 
+    private onWithThreeArguments(eventMatcher: EventMatcher, elementMatcher: ElementMatcher, executor: SubscriptionExecutor): Scope {
+        this.select(elementMatcher, (scope) => {
+            scope.on(eventMatcher, executor)
+        });
+
+        return this;
+    }
+    
     // This method is for testing
     pristine(): void {
         for(let subscription of this.subscriptions) {
