@@ -159,7 +159,6 @@ export class Scope {
 
             let orphanedChildScope;
             while(orphanedChildScope = this.childScopes[0]) {
-                console.warn('Decl bug!', this, 'attempted to deactivate without cleaning up', orphanedChildScope);
                 this.destroyChildScope(orphanedChildScope);
             }
 

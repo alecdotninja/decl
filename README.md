@@ -16,7 +16,7 @@ I've tried to select a diverse range of browsers and platforms for maximum cover
 
 ## Usage
 
-[Here](https://jsfiddle.net/v4nsbj4t/) is a live example.
+[Here](https://jsfiddle.net/wtzp3xz1/) is a live example.
 
 
 ```javascript
