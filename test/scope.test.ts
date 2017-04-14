@@ -9,7 +9,7 @@ describe('Scope', () => {
     });
 
     it('is initalized with a matched element', () => {
-        let scope = new Scope(null, '<<test>>', document.documentElement, null);
+        let scope = new Scope(null, '<<test>>', document.documentElement);
 
         expect(scope.getElement()).to.be.an.instanceof(Element);
     });
@@ -17,7 +17,7 @@ describe('Scope', () => {
     it('invokes the scope executor during initialization', () => {
         let didRunExecutorDuringInitalization = false;
 
-        let scope = new Scope(null, '<<test>>', document.documentElement, () => {
+        new Scope(null, '<<test>>', document.documentElement, () => {
             didRunExecutorDuringInitalization = true;
         });
 
@@ -344,7 +344,7 @@ function setAttribute(selector : string, attributeName: string, attribueValue: s
     }
 }
 
-function setContent(selector : string, htmlContent : string): Promise<null> {
+function setContent(selector : string, htmlContent : string): Promise<any> {
     let element = document.querySelector(selector);
 
     if(element) {
@@ -355,7 +355,7 @@ function setContent(selector : string, htmlContent : string): Promise<null> {
     }
 }
 
-function simulateEvent(selector : string, eventName : string): Promise<null> {
+function simulateEvent(selector : string, eventName : string): Promise<any> {
     let element = document.querySelector(selector);
 
     if(element) {
@@ -370,20 +370,10 @@ function simulateEvent(selector : string, eventName : string): Promise<null> {
     }
 }
 
-function waitForRepaint(): Promise<null> {
+function waitForRepaint(): Promise<any> {
     return new Promise(function(resolve) {
         setTimeout(resolve, 100);  
     });
-}
-
-function textOf(selector : string) : string {
-    let element = document.querySelector(selector);
-
-    if(element) {
-        return element.textContent;
-    }else{
-        return null;
-    }
 }
 
 function pristineDocument(): void {

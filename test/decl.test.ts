@@ -83,11 +83,11 @@ function pristineDocument(): void {
     document.documentElement.appendChild(document.createElement('BODY'));
 }
 
-function expectMethodToBeCalledBy(object: Object, propertyName : string, executor: Function): Promise<null> {
+function expectMethodToBeCalledBy(object: Object, propertyName : string, executor: Function): Promise<any> {
     return new Promise(function(resolve) {
         let original: Function = (<any>object)[propertyName];
 
-        (<any>object)[propertyName] = function(): any {
+        (<any>object)[propertyName] = function(this: any): any {
             let returnValue: any = original.apply(this, arguments);
 
             resolve();

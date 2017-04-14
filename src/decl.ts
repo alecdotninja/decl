@@ -3,7 +3,7 @@ import { Scope, ScopeExecutor, ElementMatcher, EventMatcher, SubscriptionExecuto
 export default Decl;
 
 export class Decl {
-    private static defaultInstance: Decl;
+    private static defaultInstance: Decl | null = null;
 
     static select(matcher: ElementMatcher, executor: ScopeExecutor): Scope {
         return this.getDefaultInstance().select(matcher, executor);

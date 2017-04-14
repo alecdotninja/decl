@@ -3,7 +3,14 @@
         "src/**/*.ts"
     ],
     "compilerOptions": {
+        "target": "es5",        
         "noImplicitAny": true,
-        "target": "es5"
+        "alwaysStrict": true,
+        "noImplicitThis": true,
+        "noImplicitUseStrict": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "noFallthroughCasesInSwitch": true,
+        "strictNullChecks": true
     }
 }

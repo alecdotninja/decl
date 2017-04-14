@@ -100,7 +100,7 @@ export class ElementCollector {
         return toArray<Element>(element.querySelectorAll(cssSelector));
     }
 
-    private collectMatchingElementsFromObject(element: Element, object: Object): Element[] {
+    private collectMatchingElementsFromObject(_element: Element, object: Object): Element[] {
         if(object === null) {
             return [];
         }else{
@@ -120,14 +120,11 @@ export class ElementCollector {
 
     private collectMatchingElementsFromElementVistor(element: Element, elementVistor: ElementVistor): Element[] {
         let elements: Element[] = [];
-
-        // I'm fibbing to the compiler here. `element.children` is a `NodeListOf<Element>`,
-        // which does not have a compatable interface with `Array<Element>`; however, the
-        // generated code still works because it doesn't actually use very much of the 
-        // `Array` interace (it really only assumes a numberic length property and keys for
-        // 0...length). Casting to `any` here destroys that type information, so the 
-        // compiler can't tell there is an issue and allows it without an error.
-        for(let child of <any>element.children) {
+        let children = element.children;
+        
+        for(let index = 0, length = children.length; index < length; index++) {
+            let child = children[index];
+            
             if(child instanceof Element) {
                 let element: Element = child;
                 let visitorResult = elementVistor(element);

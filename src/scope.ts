@@ -6,14 +6,14 @@ import { EventSubscription, EventMatcher } from './subscriptions/event_subscript
 
 export class Scope {
     static buildRootScope(element: Element): Scope {
-        let scope = new Scope(null, '<<root>>', element, null);
+        let scope = new Scope(null, '<<root>>', element);
 
         scope.activate();
 
         return scope;
     }
 
-    private readonly parentScope: Scope;
+    private readonly parentScope: Scope | null;
     private readonly childScopes: Scope[] = [];    
     private readonly element: Element;
     private readonly name: string;
@@ -21,7 +21,7 @@ export class Scope {
     private isActivated: boolean = false;
     private subscriptions: Subscription[] = [];
 
-    constructor(parentScope: Scope, name: string, element: Element, executor?: ScopeExecutor) {
+    constructor(parentScope: Scope | null, name: string, element: Element, executor?: ScopeExecutor) {
         this.parentScope = parentScope;
         this.name = name;
         this.element = element;
@@ -31,12 +31,34 @@ export class Scope {
         }
     }
 
-    getParentScope(): Scope {
+    getParentScope(): Scope | null {
         return this.parentScope;
     }
 
     getChildScopes(): Scope[] {
         return this.childScopes;
+    }
+
+    getSubscriptions(): Subscription[] {
+        return this.subscriptions;
+    }
+
+    addSubscription(subscription: Subscription): void {
+        this.subscriptions.push(subscription);
+
+        if(this.isActivated) {
+            subscription.connect();
+        }
+    }
+
+    removeSubscription(subscription: Subscription): void {
+        let index = this.subscriptions.indexOf(subscription);
+
+        if(index >= 0) {
+            subscription.disconnect();
+
+            this.subscriptions.splice(index, 1);
+        }
     }
 
     collectDescendantScopes(): Scope[] {
@@ -129,11 +151,15 @@ export class Scope {
     
     // This method is for testing
     pristine(): void {
-        for(let subscription of this.subscriptions) {
-            subscription.disconnect();
+        let subscription;
+        while(subscription = this.subscriptions[0]) {
+            this.removeSubscription(subscription);
         }
-        
-        this.subscriptions.splice(0);
+
+        let childScope;
+        while(childScope = this.childScopes[0]) {
+            this.destroyChildScope(childScope);
+        }
     }
 
     protected activate(): void {
@@ -152,41 +178,23 @@ export class Scope {
                 subscription.disconnect();
             }
 
-            let orphanedChildScope;
-            while(orphanedChildScope = this.childScopes[0]) {
-                this.destroyChildScope(orphanedChildScope);
+            let childScope;
+            while(childScope = this.childScopes[0]) {
+                this.destroyChildScope(childScope);
             }
 
             this.isActivated = false;            
         }
     }
 
-    private addSubscription(subscription: Subscription): void {
-        this.subscriptions.push(subscription);
-
-        if(this.isActivated) {
-            subscription.connect();
-        }
-    }
-
-    private removeSubscription(subscription: Subscription): void {
-        var index = this.subscriptions.indexOf(subscription);
-
-        if(index >= 0) {
-            subscription.disconnect();
-
-            this.subscriptions.splice(index, 1);
-        }
-    }
-
     private buildSelectExecutor(name: string, executor: ScopeExecutor): SubscriptionExecutor {
         let scopes: Scope[] = [];
 
-        return (event: MatchingElementsChangedEvent, element: Element) => {
+        return (event: MatchingElementsChangedEvent) => {
             for(let element of event.addedElements) {
                 let scope = this.createChildScope(name, element, executor);
 
-                scopes.push(scope);
+                scopes.push(scope); 
             }
 
             for(let element of event.removedElements) {
@@ -205,13 +213,13 @@ export class Scope {
     }
 
     private buildWhenExecutor(name: string, executor: ScopeExecutor): SubscriptionExecutor {
-        let scope : Scope = null;
+        let scope: Scope | null = null;
 
-        return (event: ElementMatchesChangedEvent, element: Element) => {
+        return (event: ElementMatchesChangedEvent) => {
             if(event.isMatching) {
-                scope = this.createChildScope('&' + name, this.element, executor);
+                scope = this.createChildScope('&' + name, this.element, executor);                                
             }else{
-                this.destroyChildScope(scope);
+                this.destroyChildScope(<Scope>scope);
                 scope = null;
             }
         };
