@@ -1,5 +1,7 @@
 import { Subscription, SubscriptionExecutor } from './subscription';
 
+export { SubscriptionExecutor };
+
 export class EventSubscription extends Subscription {
     readonly eventMatcher: EventMatcher;
     readonly eventNames: string[];

@@ -1,29 +1,32 @@
-import { Subscription, SubscriptionExecutor } from './subscriptions/subscription';
-import { TrivialSubscription } from './subscriptions/trivial_subscription';
-import { MatchingElementsSubscription, MatchingElementsChangedEvent } from './subscriptions/matching_elements_subscription';
-import { ElementMatchesSubscription, ElementMatchesChangedEvent, ElementMatcher } from './subscriptions/element_matches_subscription';
-import { EventSubscription, EventMatcher } from './subscriptions/event_subscription';
+import { Declaration, SubscriptionExecutor } from './declarations/declaration';
+import { MatchDeclaration } from './declarations/match_declaration';
+import { UnmatchDeclaration } from './declarations/unmatch_declaration';
+import { OnDeclaration, EventMatcher } from './declarations/on_declaration';
+
+import { ElementMatcher } from './declarations/scope_tracking_declaration';
+import { SelectDeclaration } from './declarations/select_declaration';
+import { WhenDeclaration } from './declarations/when_declaration';
+
+export { Declaration, SubscriptionExecutor, ElementMatcher, EventMatcher };
+
+export interface ScopeExecutor { 
+    (scope: Scope, element: Element): void
+};
 
 export class Scope {
     static buildRootScope(element: Element): Scope {
-        let scope = new Scope(null, '<<root>>', element);
-
+        let scope = new Scope(element);
         scope.activate();
 
         return scope;
     }
 
-    private readonly parentScope: Scope | null;
-    private readonly childScopes: Scope[] = [];    
     private readonly element: Element;
-    private readonly name: string;
 
     private isActivated: boolean = false;
-    private subscriptions: Subscription[] = [];
+    private declarations: Declaration[] = [];
 
-    constructor(parentScope: Scope | null, name: string, element: Element, executor?: ScopeExecutor) {
-        this.parentScope = parentScope;
-        this.name = name;
+    constructor(element: Element, executor?: ScopeExecutor) {
         this.element = element;
 
         if(executor) {
@@ -31,91 +34,75 @@ export class Scope {
         }
     }
 
-    getParentScope(): Scope | null {
-        return this.parentScope;
-    }
-
-    getChildScopes(): Scope[] {
-        return this.childScopes;
-    }
-
-    getSubscriptions(): Subscription[] {
-        return this.subscriptions;
-    }
-
-    addSubscription(subscription: Subscription): void {
-        this.subscriptions.push(subscription);
-
-        if(this.isActivated) {
-            subscription.connect();
-        }
-    }
-
-    removeSubscription(subscription: Subscription): void {
-        let index = this.subscriptions.indexOf(subscription);
-
-        if(index >= 0) {
-            subscription.disconnect();
-
-            this.subscriptions.splice(index, 1);
-        }
-    }
-
-    collectDescendantScopes(): Scope[] {
-        let scopes: Scope[] = [];
-
-        for(let scope of this.childScopes) {
-            scopes.push(scope, ...scope.collectDescendantScopes());
-        }
-
-        return scopes;
-    }
-
-    drawTree(): void {
-        console.groupCollapsed(this.name);
-
-        try {
-            console.info('Element', this.element);
-            console.info('Subscriptions', this.subscriptions);
-
-            for(let subscription of this.subscriptions) {
-                if(subscription instanceof EventSubscription) {
-                    console.log(subscription.eventMatcher, '(', subscription.eventNames, ') fires', subscription.executor);
-                }
-            }
-            
-            for(let childScope of this.childScopes) {
-                childScope.drawTree();
-            }
-        }finally{
-            console.groupEnd();
-        }
-    }
-
     getElement(): Element {
         return this.element;
     }
 
+    getDeclarations(): Declaration[] {
+        return this.declarations;
+    }
+
+    inspect(): void {
+        if(this.isActivated) {
+            (<any>console.group)(this.element, '(active)');
+        }else{
+            (<any>console.group)(this.element, '(inactive)');
+        }
+
+        try {
+            for(let declaration of this.declarations) {
+                declaration.inspect();
+            }
+        }finally{
+            (<any>console.groupEnd)();
+        }
+    }
+
+    activate(): void {
+        if(!this.isActivated) {
+            this.isActivated = true;
+
+            for(let declaration of this.declarations) {
+                declaration.activate();
+            }
+        }
+    }
+
+    deactivate(): void {        
+        if(this.isActivated) {
+            this.isActivated = false;            
+            
+            for(let declaration of this.declarations) {
+                declaration.deactivate();
+            }
+        }
+    }
+
+    pristine(): void {
+        this.deactivate();
+        this.removeAllDeclarations();
+    }
+
     match(executor: SubscriptionExecutor): Scope {
-        this.addSubscription(new TrivialSubscription(this.element, { connected: true }, executor));
+        this.addDeclaration(new MatchDeclaration(this.element, executor));
 
         return this;
     }
 
     unmatch(executor: SubscriptionExecutor): Scope {
-        this.addSubscription(new TrivialSubscription(this.element, { disconnected: true }, executor));
+        this.addDeclaration(new UnmatchDeclaration(this.element, executor));
 
         return this;
     }
 
     select(matcher: ElementMatcher, executor: ScopeExecutor): Scope {
-        this.addSubscription(new MatchingElementsSubscription(this.element, matcher, this.buildSelectExecutor(String(matcher), executor)));
+        this.addDeclaration(new SelectDeclaration(this.element, matcher, executor));
 
         return this;
     }
 
     when(matcher: ElementMatcher, executor: ScopeExecutor): Scope {
-		this.addSubscription(new ElementMatchesSubscription(this.element, matcher, this.buildWhenExecutor(String(matcher), executor)));
+		this.addDeclaration(new WhenDeclaration(this.element, matcher, executor));
 
         return this;
     }
@@ -136,114 +123,42 @@ export class Scope {
     }
 
     private onWithTwoArguments(eventMatcher: EventMatcher, executor: SubscriptionExecutor): Scope {
-        this.addSubscription(new EventSubscription(this.element, eventMatcher, executor));
+        this.addDeclaration(new OnDeclaration(this.element, eventMatcher, executor));
 
         return this;
     }
 
     private onWithThreeArguments(eventMatcher: EventMatcher, elementMatcher: ElementMatcher, executor: SubscriptionExecutor): Scope {
         this.select(elementMatcher, (scope) => {
-            scope.on(eventMatcher, executor)
+            scope.on(eventMatcher, executor);
         });
 
         return this;
     }
-    
-    // This method is for testing
-    pristine(): void {
-        let subscription;
-        while(subscription = this.subscriptions[0]) {
-            this.removeSubscription(subscription);
-        }
 
-        let childScope;
-        while(childScope = this.childScopes[0]) {
-            this.destroyChildScope(childScope);
-        }
-    }
+    private addDeclaration(declaration: Declaration): void {
+        this.declarations.push(declaration);
 
-    protected activate(): void {
-        if(!this.isActivated) {
-            this.isActivated = true;
-
-            for(let subscription of this.subscriptions) {
-                subscription.connect();
-            }
-        }
-    }
-
-    protected deactivate(): void {
         if(this.isActivated) {
-            for(let subscription of this.subscriptions) {
-                subscription.disconnect();
-            }
-
-            let childScope;
-            while(childScope = this.childScopes[0]) {
-                this.destroyChildScope(childScope);
-            }
-
-            this.isActivated = false;            
+            declaration.activate();
         }
     }
 
-    private buildSelectExecutor(name: string, executor: ScopeExecutor): SubscriptionExecutor {
-        let scopes: Scope[] = [];
-
-        return (event: MatchingElementsChangedEvent) => {
-            for(let element of event.addedElements) {
-                let scope = this.createChildScope(name, element, executor);
-
-                scopes.push(scope); 
-            }
-
-            for(let element of event.removedElements) {
-                for(let index = 0, length = scopes.length, scope : Scope; index < length; index++) {
-                    scope = scopes[index];
-
-                    if(scope.element === element) {
-                        this.destroyChildScope(scope);
-                        
-                        scopes.splice(index, 1);
-                        break;
-                    }
-                }
-            }
-        };
-    }
-
-    private buildWhenExecutor(name: string, executor: ScopeExecutor): SubscriptionExecutor {
-        let scope: Scope | null = null;
-
-        return (event: ElementMatchesChangedEvent) => {
-            if(event.isMatching) {
-                scope = this.createChildScope('&' + name, this.element, executor);                                
-            }else{
-                this.destroyChildScope(<Scope>scope);
-                scope = null;
-            }
-        };
-    }
-
-    private createChildScope(name: string, element: Element, executor?: ScopeExecutor): Scope {
-        let scope = new Scope(this, name, element, executor);
-        this.childScopes.push(scope);
-
-        scope.activate();
-
-        return scope;
-    }
-
-    private destroyChildScope(scope: Scope) {
-        let index = this.childScopes.indexOf(scope);
-
-        scope.deactivate();
+    private removeDeclaration(declaration: Declaration): void {  
+        let index = this.declarations.indexOf(declaration);
 
         if(index >= 0) {
-            this.childScopes.splice(index, 1);
+            this.declarations.splice(index, 1);
+        }
+
+        declaration.deactivate();        
+    }
+
+    private removeAllDeclarations() {        
+        let declaration: Declaration;
+
+        while(declaration = this.declarations[0]) {
+            this.removeDeclaration(declaration);
         }
     }
 }
-
-export interface ScopeExecutor { (scope: Scope, element: Element): void };
-export { ElementMatcher, EventMatcher, SubscriptionExecutor };

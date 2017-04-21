@@ -1,6 +1,8 @@
 import { BatchedMutationSubscription, SubscriptionExecutor, SubscriptionEvent } from './batched_mutation_subscription';
 import { ElementMatcher, ElementCollector } from '../element_collector';
 
+export { ElementMatcher };
+
 export class MatchingElementsSubscription extends BatchedMutationSubscription {
     readonly matcher: ElementMatcher;
 
@@ -24,8 +26,8 @@ export class MatchingElementsSubscription extends BatchedMutationSubscription {
 
     disconnect(): void {
         if(this.isConnected) {
-            this.updateMatchingElements([]);
             this.stopListening();
+            this.updateMatchingElements([]);
 
             this.isConnected = false;
         }        

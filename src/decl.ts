@@ -1,6 +1,8 @@
-import { Scope, ScopeExecutor, ElementMatcher, EventMatcher, SubscriptionExecutor } from './scope';
+import { Scope, ElementMatcher, EventMatcher, ScopeExecutor, SubscriptionExecutor } from './scope';
 
 export default Decl;
+
+export { Scope, ElementMatcher, EventMatcher, ScopeExecutor, SubscriptionExecutor };
 
 export class Decl {
     private static defaultInstance: Decl | null = null;
@@ -17,12 +19,8 @@ export class Decl {
         return this.getDefaultInstance().getRootScope();
     }
 
-    static collectScopes(): Scope[] {
-        return this.getDefaultInstance().collectScopes();
-    }
-
-    static drawTree(): void {
-        this.getDefaultInstance().drawTree();
+    static inspect(): void {
+        this.getDefaultInstance().inspect();
     }
 
     static getDefaultInstance() : Decl {
@@ -55,15 +53,11 @@ export class Decl {
     }
 
     getRootScope(): Scope {
-        return this.scope;
-    }
-    
-    collectScopes(): Scope[] {
-        return [this.scope, ...this.scope.collectDescendantScopes()];
+       return this.scope; 
     }
 
-    drawTree(): void {
-        this.scope.drawTree();
+    inspect(): void {
+        this.scope.inspect();
     }
 
     pristine(): void {
@@ -75,5 +69,3 @@ export class Decl {
 if(typeof(window) !== 'undefined') {
     (<any>window).Decl = Decl;
 }
-
-export { Scope, ScopeExecutor, ElementMatcher, EventMatcher, SubscriptionExecutor };

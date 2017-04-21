@@ -1,5 +1,7 @@
 import { Subscription, SubscriptionExecutor, SubscriptionEvent } from './subscription';
 
+export { SubscriptionExecutor };
+
 export interface TrivialSubscriptionConfiguration {
     connected?: boolean,
     disconnected?: boolean
