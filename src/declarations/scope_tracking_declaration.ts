@@ -5,7 +5,7 @@ import { Scope, ScopeExecutor } from '../scope';
 export { ElementMatcher, ScopeExecutor };
 
 export abstract class ScopeTrackingDeclaration extends Declaration {
-    protected readonly childScopes: Scope[] = [];
+    private readonly childScopes: Scope[] = [];
     
     deactivate(): void {
         this.removeAllChildScopes();
@@ -14,6 +14,12 @@ export abstract class ScopeTrackingDeclaration extends Declaration {
 
     getChildScopes() {
         return this.childScopes;
+    }
+
+    protected inspectChildScopes(includeSource?: boolean): void {        
+        for(let childScope of this.childScopes) {
+            childScope.inspect(includeSource);
+        }
     }
 
     protected addChildScope(scope: Scope) {

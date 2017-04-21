@@ -23,13 +23,11 @@ export class WhenDeclaration extends ScopeTrackingDeclaration {
         });
     }
 
-    inspect(): void {
-        (<any>console.group)('&', this.matcher, '(' + this.childScopes.length + ' matches)');
+    inspect(includeSource?: boolean): void {
+        (<any>console.groupCollapsed)('when', this.matcher);
 
-        try {
-            for(let childScope of this.childScopes) {
-                childScope.inspect();
-            }
+        try{
+            this.inspectChildScopes(includeSource);        
         }finally{
             console.groupEnd();
         }

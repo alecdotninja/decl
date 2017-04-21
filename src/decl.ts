@@ -19,8 +19,8 @@ export class Decl {
         return this.getDefaultInstance().getRootScope();
     }
 
-    static inspect(): void {
-        this.getDefaultInstance().inspect();
+    static inspect(includeSource?: boolean): void {
+        this.getDefaultInstance().inspect(includeSource);
     }
 
     static getDefaultInstance() : Decl {
@@ -56,8 +56,14 @@ export class Decl {
        return this.scope; 
     }
 
-    inspect(): void {
-        this.scope.inspect();
+    inspect(includeSource?: boolean): void {
+        console.groupCollapsed('<<root>>');
+        
+        try {
+            this.scope.inspect(includeSource);        
+        }finally{
+            console.groupEnd();
+        }
     }
 
     pristine(): void {

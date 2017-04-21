@@ -27,5 +27,5 @@ export abstract class Declaration {
         }        
     }
 
-    abstract inspect(): void;
+    abstract inspect(includeSource?: boolean): void;
 }

@@ -22,6 +22,7 @@ export class Scope {
     }
 
     private readonly element: Element;
+    private readonly executors: ScopeExecutor[] = [];
 
     private isActivated: boolean = false;
     private declarations: Declaration[] = [];
@@ -30,8 +31,14 @@ export class Scope {
         this.element = element;
 
         if(executor) {
-            executor.call(this, this, this.element);
+            this.addExecutor(executor);
         }
+    }
+
+    addExecutor(executor: ScopeExecutor): void {
+        this.executors.push(executor);
+
+        return executor.call(this, this, this.element);
     }
 
     getElement(): Element {
@@ -42,16 +49,22 @@ export class Scope {
         return this.declarations;
     }
 
-    inspect(): void {
-        if(this.isActivated) {
-            (<any>console.group)(this.element, '(active)');
-        }else{
-            (<any>console.group)(this.element, '(inactive)');
-        }
+    inspect(includeSource?: boolean): void {
+        (<any>console.groupCollapsed)(this.element);
 
         try {
+            if(includeSource) {
+                console.groupCollapsed('source');
+            
+                for(let executor of this.executors) {
+                    console.log(executor);
+                }
+
+                console.groupEnd();
+            }
+            
             for(let declaration of this.declarations) {
-                declaration.inspect();
+                declaration.inspect(includeSource);
             }
         }finally{
             (<any>console.groupEnd)();

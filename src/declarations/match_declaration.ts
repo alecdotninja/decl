@@ -16,6 +16,8 @@ export class MatchDeclaration extends Declaration {
     }
 
     inspect(): void {
-        console.log('fires', this.executor, 'when the element enters the DOM (matches)');
+        console.groupCollapsed('matches');
+        console.log(this.executor);
+        console.groupEnd();
     }
 }

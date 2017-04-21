@@ -16,6 +16,8 @@ export class UnmatchDeclaration extends Declaration {
     }
 
     inspect(): void {
-        console.log('fires', this.executor, 'when the element leaves the DOM (unmatches)');
+        console.groupCollapsed('unmatches');
+        console.log(this.executor);
+        console.groupEnd();
     }
 }

@@ -18,6 +18,12 @@ export class OnDeclaration extends Declaration {
     }
 
     inspect(): void {
-        console.log('fires', this.executor, 'on', this.matcher);
+        (<any>console.groupCollapsed)('on', this.matcher);
+
+        try {
+            console.log(this.executor);
+        }finally{
+            console.groupEnd();
+        }
     }
 }

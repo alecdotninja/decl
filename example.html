@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="googlebot" content="noindex, nofollow">
+
+  <script type="text/javascript" src="./dist/decl.js"></script>
+
+  <style type="text/css">
+    .expandable-row {
+      margin: 1em;
+      border: 1px solid #ccc;
+    }
+    
+    .expandable-row .expandable-row-handle {
+      padding: 0.5em;
+      background-color: #eee;
+      cursor: pointer;
+    }
+    
+    .expandable-row .expandable-row-context {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.25s linear;
+    }
+    
+    .expandable-row .expandable-row-context p {
+      margin: 0.5em;
+    }
+    
+    .expandable-row.expanded .expandable-row-context {
+      max-height: 600px;
+    }
+  </style>
+
+  <title>test</title>
+
+  <script type='text/javascript'>
+    //<![CDATA[
+    window.onload = function () {
+      Decl.select('.expandable-row', function (scope, expandableRow) {
+        var expandableRowclassList = expandableRow.classList;
+
+        scope.when(':not(.expanded)', function (scope) {
+          scope.on('click', '.expandable-row-handle', function () {
+            expandableRowclassList.add('expanded');
+          });
+        });
+
+        scope.when('.expanded', function (scope) {
+          scope.on('click', '.expandable-row-handle', function () {
+            expandableRowclassList.remove('expanded');
+          });
+        });
+      });
+
+    }//]]>
+
+  </script>
+
+
+</head>
+
+<body>
+  <div class="expandable-row">
+    <div class="expandable-row-handle">
+      John of Worcester
+    </div>
+    <div class="expandable-row-context">
+      <p>
+        John of Worcester (died c. 1140) was an English monk and chronicler who worked at Worcester Priory. He is usually held to
+        be the author of the Chronicon ex chronicis.
+      </p>
+      <p>
+        The greater part of the work, up to 1117 or 1118, was formerly attributed to the man Florence of Worcester on the basis of
+        the entry for his death under the annal of 1118, which credits his skill and industry for making the chronicle such
+        a prominent work. In this view, the other Worcester monk, John, merely wrote the final part of the work. However,
+        there are two main objections against the ascription to Florence. First, there is no change of style in the Chronicon
+        after Florence's death, and second, certain sections before 1118 rely to some extent on the Historia novorum of Eadmer
+        of Canterbury, which was completed sometime in 1121 - 1124.
+      </p>
+    </div>
+  </div>
+
+  <div class="expandable-row">
+    <div class="expandable-row-handle">
+      Greek Army uniforms
+    </div>
+    <div class="expandable-row-context">
+      <p>
+        The modern Greek Army has a history of over 180 years, during which has undergone dramatic changes and been involved in some
+        of the major conflicts on the European continent. The modern Greek military throughout its history was closely following
+        international developments in equipment and uniforms. With the notable exception of the elite Evzones units, which
+        based their uniforms on the indigenous traditional garments of the 18th century, the rest of the Army, as most militaries
+        worldwide, was always quick to adopt the military fashion current among the armies of the influential Great Powers.
+        This influence can be roughly divided in three periods: French-style uniforms, which dominated throughout the 19th
+        century (with many Bavarian elements during the reign of King Otto, and some Austrian and Russian influences later
+        on), the British styles introduced around World War I and used during World War II and until the late 1960s, and
+        the "NATO" or US-style predominating from ca. 1968 onward. Various individual items or details can of course be traced
+        to other influences, and there were also transitional uniforms combining previous designs.
+      </p>
+    </div>
+  </div>
+
+</body>
+
+</html>
