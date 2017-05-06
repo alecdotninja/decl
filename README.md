@@ -16,64 +16,108 @@ I've tried to select a diverse range of browsers and platforms for maximum cover
 
 ## Usage
 
-[Here](https://jsfiddle.net/wtzp3xz1/) is a live example.
+Decl is designed to be intuitive and reminiscent of SCSS. To get an intuition for how Decl works, checkout [this Fiddle](https://jsfiddle.net/wtzp3xz1/) which shows a simple implementation for the accordion effect.
 
+### Scopes
+
+Scopes are the central idea in Decl. A scope is a combination of some element and rules to be matched to that element. By default, the global `Decl` behaves like a scope for the root of the document (`document.documentElement`).
+
+#### Select Rules
+Select rules can be created on a scope by calling `select` with a matcher (usually a CSS selector string) and callback function. The select rule will match any child of the scope's element that matches the mater, and the callback will be invoked with a new scope for any element that matches the select rule.
 
 ```javascript
-
-Decl.select('body.accounts-index', function(scope) {
-    scope.select('.row.expandable', function(scope) {
-        scope.when(':not(.expanded)', function(scope) {
-            scope.on('click', function(element) {
-                $(element).addClass('expanded');
-            });
-        });
-
-        scope.when('.expanded', function(scope) {
-            scope.on('click', function(element) {
-                $(element).removeClass('expanded');
-            });
-        });
-    });
-});
-
-Decl.select('select[data-uses-select2]', function(scope) {
-    scope.match(function(element) {
-        $(element).select2();
-    });
-
-    scope.unmatch(function(element) {
-        var select2 = $(element).data('select2');
-
-        if(select2) {
-            select2.destroy();
-        }
-    });
-});
-
-Decl.select('.counting-widget', function(scope) {
-    var count = 0;
-
-    scope.select('button.display-button', function(scope) {
-        scope.on('click', function() {
-            alert('The count is ' + count + '.');
-        });
-    });
-
-    scope.select('button.increment-button', function(scope) {
-        scope.on('click', function() {
-            count++;
-        });
-    });
-
-    scope.select('button.decrement-button', function(scope) {
-        scope.on('click', function() {
-            count--;
-        });
-    });
+Decl.select('.kitten', function(scope, kitten) {
+  // This callback will run any time an element has the "kitten" class. `kitten` is the element that matched, and `scope` is a new scope for that element.
+  
+  scope.select('.ears', function(scope, ears) {
+    // This callback will run anytime a child of the `kitten` element has the "ears" class. Here, the `ears` is the element that has the "ears" class (nested within the `kitten` element), and `scope` is new scope for that element.
+  });
 });
 
 ```
+
+#### When Rules
+When rules are like select rules except they are created by calling `when` on a scope and apply to the element itself rather than the children.
+
+```javascript
+Decl.select('.kitten', function(scope, kitten) {  
+  scope.when('.happy', function(scope) {
+    // This callback will run anytime there is `kitten` element which simultaneously has the "kitten" and "happy" classes.
+  });
+  
+  scope.when('.playful', function(scope) {
+    // Similarly, this callback will run anytime there is `kitten` element which simultaneously has the "kitten" and "playful" classes.
+  });
+});
+```
+
+#### Match Rules
+Match rules are created by calling `match` and `unmatch` on a scope with a callback. The callback will be invoked with the element that has just match or stopped matching respectively.
+
+For performance reasons, the callback to select and when rules should only be used to add rules to the new scope it is passed. To tap into the lifecycle of an element matching a particular scope chain, match rules can be used.
+
+```javascript
+var playfulKittenCount = 0;
+
+Decl.select('.kitten.playful', function(scope) {
+  // This callback should avoid any computations and have no side effects (except calling methods on scope).
+  
+  scope.match(function(playfulKitten) {
+    // The match callback will be invoked with the matching element exactly once when the element matches after all rules has been processed. Any modifications to the DOM must be done here.
+    playfulKittenCount++;
+  });
+  
+  scope.unmatch(function(playfulKitten) {
+    // The unmatch callback will be invoked exactly once when an element which had previously matched stops doing so but after all rules have been processed. If the match callback was called for an element, the unmatch callback is guaranteed to be called (unless the page is unloaded entirely).
+    playfulKittenCount--;
+  });
+});
+```
+
+#### Event Rules
+Event rules allow you to define behavior for the occurrence of a DOM event on an element of a particular scope. They can be created by calling on `on` on a scope with an event matcher (usually a string with the event name) and a callback to be invoked when a matching event occurs. The callback will receive the matching event and a reference to the underlying element to which the listener was attached.
+
+```javascript
+Decl.select('.kitten', function(scope) {
+  scope.on('click', function(event, kitten) {
+    // This callback is invoked when a click event (`event`) occurs on an element with the "kitten" class (`kitten`).
+  });
+
+  // For connivence, jQuery style on syntax with an element matcher is also supported.
+  scope.on('click', '.nose', function(event, nose) {
+    // The callback is invoked when a click event (`event`) occurs on an element with the "nose" class (`nose`) that is the child of an element with the "kitten" class. 
+
+    // This is equivalent to writing:
+    //   scope.select('.nose', function(scope) {
+    //     scope.on('click', function(event, nose) {
+    //       // (implementation)
+    //     });
+    //   });
+  });
+});
+```
+
+
+### The global `Decl` object
+
+The global `Decl` object is a constructor for instances of the `Decl` class. It delegates all but a few of it's methods to a default instance. Additionally, this default instance delegates `select` and `on` to a root scope. This is what allows the global `Decl` object to be used as the starting point for constructing new scopes.
+
+Instances of `Decl` must be tied to a document and create a root scope for the root element of that document (the `documentElement` of that document). At initialization, the default instance is configured for a decl with the document in the global `document` reference; however, additional decls for other documents may be created and set as the default instance.
+
+#### `Decl.getDefaultInstance`
+`getDefaultInstance` returns the instance of `Decl` to which the `Decl` class is currently delegating.
+
+#### `Decl.setDefaultInstance`
+`getDefaultInstance` sets the instance of `Decl` to which the `Decl` class is currently delegating.
+
+#### `Decl#getRootScope`
+`getRootScope` returns the scope with no parent for the `documentElement` of the document to which the decl is attached and to which the `select` and `on` methods are delegated.
+
+#### `Decl#inspect`
+`inspect` prints the current state of the decl object to the console. This may be useful for debugging.
+
+#### `Decl#pristine`
+`pristine` resets this decl object to it's initial state fully cleaning up all scopes it contains in the process.
 
 
 ## Development
