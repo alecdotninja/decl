@@ -1,13 +1,11 @@
-import { Scope, ElementMatcher, EventMatcher, ScopeExecutor, SubscriptionExecutor } from './scope';
+import { Scope, NodeMatcher, EventMatcher, ScopeExecutor, SubscriptionExecutor } from './scope';
 
-export default Decl;
-
-export { Scope, ElementMatcher, EventMatcher, ScopeExecutor, SubscriptionExecutor };
+export { Scope, NodeMatcher, EventMatcher, ScopeExecutor, SubscriptionExecutor };
 
 export class Decl {
     private static defaultInstance: Decl | null = null;
 
-    static select(matcher: ElementMatcher, executor: ScopeExecutor): Scope {
+    static select(matcher: NodeMatcher, executor: ScopeExecutor): Scope {
         return this.getDefaultInstance().select(matcher, executor);
     }
 
@@ -24,7 +22,7 @@ export class Decl {
     }
 
     static getDefaultInstance() : Decl {
-        return this.defaultInstance || (this.defaultInstance = new Decl(document.documentElement));
+        return this.defaultInstance || (this.defaultInstance = new Decl(window.document));
     }
 
     static setDefaultInstance(decl: Decl) : Decl {
@@ -40,11 +38,11 @@ export class Decl {
 
     private scope: Scope;
 
-    constructor(root: Element) {
+    constructor(root: Node) {
         this.scope = Scope.buildRootScope(root);
     }
 
-    select(matcher: ElementMatcher, executor: ScopeExecutor): Scope {
+    select(matcher: NodeMatcher, executor: ScopeExecutor): Scope {
         return this.scope.select(matcher, executor);
     }
 
@@ -75,3 +73,5 @@ export class Decl {
 if(typeof(window) !== 'undefined') {
     (<any>window).Decl = Decl;
 }
+
+export default Decl;

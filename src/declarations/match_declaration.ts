@@ -7,12 +7,12 @@ export class MatchDeclaration extends Declaration {
     protected readonly subscription: TrivialSubscription;
     protected readonly executor: SubscriptionExecutor;
 
-    constructor(element: Element, executor: SubscriptionExecutor) {
-        super(element);
+    constructor(node: Node, executor: SubscriptionExecutor) {
+        super(node);
 
         this.executor = executor;
 
-        this.subscription = new TrivialSubscription(this.element, { connected: true }, this.executor);
+        this.subscription = new TrivialSubscription(this.node, { connected: true }, this.executor);
     }
 
     inspect(): void {

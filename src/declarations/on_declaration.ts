@@ -8,13 +8,13 @@ export class OnDeclaration extends Declaration {
     protected matcher: EventMatcher;
     protected executor: SubscriptionExecutor;
 
-    constructor(element: Element, matcher: EventMatcher, executor: SubscriptionExecutor) {
-        super(element);
+    constructor(node: Node, matcher: EventMatcher, executor: SubscriptionExecutor) {
+        super(node);
 
         this.matcher = matcher;
         this.executor = executor;
 
-        this.subscription = new EventSubscription(this.element, this.matcher, this.executor);    
+        this.subscription = new EventSubscription(this.node, this.matcher, this.executor);    
     }
 
     inspect(): void {

@@ -1,24 +1,24 @@
-import { ScopeTrackingDeclaration, ElementMatcher, ScopeExecutor } from './scope_tracking_declaration';
-import { ElementMatchesSubscription, ElementMatchesChangedEvent } from '../subscriptions/element_matches_subscription';
+import { ScopeTrackingDeclaration, NodeMatcher, ScopeExecutor } from './scope_tracking_declaration';
+import { NodeMatchesSubscription, NodeMatchesChangedEvent } from '../subscriptions/node_matches_subscription';
 
-export { ElementMatcher, ScopeExecutor };
+export { NodeMatcher, ScopeExecutor };
 
 export class WhenDeclaration extends ScopeTrackingDeclaration {
-    protected subscription: ElementMatchesSubscription;
-    protected matcher: ElementMatcher;
+    protected subscription: NodeMatchesSubscription;
+    protected matcher: NodeMatcher;
     protected executor: ScopeExecutor;
 
-    constructor(element: Element, matcher: ElementMatcher, executor: ScopeExecutor) {
-        super(element);
+    constructor(node: Node, matcher: NodeMatcher, executor: ScopeExecutor) {
+        super(node);
 
         this.matcher = matcher;
         this.executor = executor;
 
-        this.subscription = new ElementMatchesSubscription(this.element, this.matcher, (event: ElementMatchesChangedEvent) => {
+        this.subscription = new NodeMatchesSubscription(this.node, this.matcher, (event: NodeMatchesChangedEvent) => {
             if(event.isMatching) {
-                this.addChildScopeByElement(element, this.executor);
+                this.addChildScopeByNode(this.node, this.executor);
             }else{
-                this.removeChildScopeByElement(element);
+                this.removeChildScopeByNode(this.node);
             }
         });
     }

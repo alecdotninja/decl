@@ -7,12 +7,12 @@ export class UnmatchDeclaration extends Declaration {
     protected subscription: TrivialSubscription;
     protected executor: SubscriptionExecutor;
 
-    constructor(element: Element, executor: SubscriptionExecutor) {
-        super(element);
+    constructor(node: Node, executor: SubscriptionExecutor) {
+        super(node);
 
         this.executor = executor;
 
-        this.subscription = new TrivialSubscription(this.element, { disconnected: true }, this.executor);
+        this.subscription = new TrivialSubscription(this.node, { disconnected: true }, this.executor);
     }
 
     inspect(): void {

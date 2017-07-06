@@ -1,8 +1,8 @@
 import { Declaration } from './declaration';
-import { ElementMatcher } from '../element_collector';
+import { NodeMatcher } from '../node_collector';
 import { Scope, ScopeExecutor } from '../scope';
 
-export { ElementMatcher, ScopeExecutor };
+export { NodeMatcher, ScopeExecutor };
 
 export abstract class ScopeTrackingDeclaration extends Declaration {
     private readonly childScopes: Scope[] = [];
@@ -50,15 +50,15 @@ export abstract class ScopeTrackingDeclaration extends Declaration {
         }
     }
 
-    protected addChildScopeByElement(element: Element, executor?: ScopeExecutor) {
-        let childScope = new Scope(element, executor);
+    protected addChildScopeByNode(node: Node, executor?: ScopeExecutor) {
+        let childScope = new Scope(node, executor);
 
         this.addChildScope(childScope);
     }
 
-    protected removeChildScopeByElement(element: Element) {
+    protected removeChildScopeByNode(node: Node) {
         for(let childScope of this.childScopes) {
-            if(childScope.getElement() === element) {
+            if(childScope.getNode() === node) {
                 this.removeChildScope(childScope);
                 return; // loop must exist to avoid data-race
             }

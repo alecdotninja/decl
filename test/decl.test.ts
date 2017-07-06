@@ -31,13 +31,13 @@ describe('Decl', () => {
             });
 
             it('returns the externally set default instance', () => {
-                expect(Decl.getDefaultInstance().getRootScope().getElement()).to.equal(document.body);
+                expect(Decl.getDefaultInstance().getRootScope().getNode()).to.equal(document.body);
             });
         });
 
         context('when the default instance has not been externally set', () => {
             it('constructs a new default instance with the root of the document', () => {
-                expect(Decl.getDefaultInstance().getRootScope().getElement()).to.equal(document.documentElement);
+                expect(Decl.getDefaultInstance().getRootScope().getNode()).to.equal(document);
             });
         });
     });
@@ -72,7 +72,7 @@ describe('Decl', () => {
 
     describe('#getScope', () => {
         it('returns the root scope', () => {
-            expect(Decl.getDefaultInstance().getRootScope().getElement()).to.equal(document.documentElement);
+            expect(Decl.getDefaultInstance().getRootScope().getNode()).to.equal(document);
         });  
     });
 });

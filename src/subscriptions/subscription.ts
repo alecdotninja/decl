@@ -1,9 +1,9 @@
 export abstract class Subscription {
     readonly executor: SubscriptionExecutor;
-    readonly element: Element;
+    readonly node: Node;
     
-    constructor(element: Element, executor: SubscriptionExecutor) {
-        this.element = element;
+    constructor(node: Node, executor: SubscriptionExecutor) {
+        this.node = node;
         this.executor = executor;
     }
 
@@ -12,7 +12,7 @@ export abstract class Subscription {
 }
 
 export interface SubscriptionExecutor { 
-    (event: Event | SubscriptionEvent, element: Element): void 
+    (event: Event | SubscriptionEvent, node: Node): void 
 }
 
 export class SubscriptionEvent {

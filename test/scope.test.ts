@@ -8,10 +8,10 @@ describe('Scope', () => {
         pristineDocument();
     });
 
-    it('is initalized with a matched element', () => {
+    it('is initalized with a matched node', () => {
         let scope = new Scope(document.documentElement);
 
-        expect(scope.getElement()).to.equal(document.documentElement);
+        expect(scope.getNode()).to.equal(document.documentElement);
     });
 
     it('invokes the scope executor during initialization', () => {
@@ -59,7 +59,7 @@ describe('Scope', () => {
     });
 
     describe('#select', () => {
-        context('when a child of the matched element matches the provided element matcher outright', () => {
+        context('when a child of the matched node matches the provided node matcher outright', () => {
             it('activates a new scope with the provided scope executor', () => {
                 let didActivateScope = false;
 
@@ -77,7 +77,7 @@ describe('Scope', () => {
             });
         });
 
-        context('when a child of the matched element does *not* match the provided element matcher outright', () => {
+        context('when a child of the matched node does *not* match the provided node matcher outright', () => {
             it('does *not* activate a new scope with the provided scope executor', () => {
                 let didActivateScope = false;
 
@@ -95,7 +95,7 @@ describe('Scope', () => {
             });
         });
 
-        context('when a child of the matched element mutates to match the provided element matcher', () => {
+        context('when a child of the matched node mutates to match the provided node matcher', () => {
             it('activates a new scope with the provided scope executor', () => {
                 let didActivateScope = false;
 
@@ -115,8 +115,8 @@ describe('Scope', () => {
             });
         });
 
-        context('when a child of the matched element mutates to no longer match the provided element matcher', () => {
-            it('deactivates the scope that was activated when a child of the matched element first matched the element matcher', () => {
+        context('when a child of the matched node mutates to no longer match the provided node matcher', () => {
+            it('deactivates the scope that was activated when a child of the matched node first matched the node matcher', () => {
                 let didDeactivateScope = false;
 
                 Decl.select('[data-match-me]', (scope) => {
@@ -135,7 +135,7 @@ describe('Scope', () => {
             });
         });
 
-        context('when an element which is not a child of the matched element mutates to match the provided element matcher', () => {
+        context('when an node which is not a child of the matched node mutates to match the provided node matcher', () => {
             it('does *not* activate a new scope with the provided scope executor', () => {
                 let didActivateScope = false;
 
@@ -157,7 +157,7 @@ describe('Scope', () => {
     });
 
     describe('#when', () => {
-        context('when the matched element also matches the provided element matcher outright', () => {
+        context('when the matched node also matches the provided node matcher outright', () => {
             it('activates a new scope with the provided scope executor', () => {
                 let didActivateScope = false;
 
@@ -175,7 +175,7 @@ describe('Scope', () => {
             });
         });
 
-        context('when the matched element does *not* match the provided element matcher outright', () => {
+        context('when the matched node does *not* match the provided node matcher outright', () => {
             it('does *not* activate a new scope with the provided scope executor', () => {
                 let didActivateScope = false;
 
@@ -193,7 +193,7 @@ describe('Scope', () => {
             });
         });
 
-        context('when the matched element mutates to match the provided element matcher', () => {
+        context('when the matched node mutates to match the provided node matcher', () => {
             it('activates a new scope with the provided scope executor', () => {
                 let didActivateScope = false;
 
@@ -213,8 +213,8 @@ describe('Scope', () => {
             });
         });
 
-        context('when the matched element mutates to no longer match the provided element matcher', () => {
-            it('deactivates the scope that was activated when the matched element first matched the element matcher', () => {
+        context('when the matched node mutates to no longer match the provided node matcher', () => {
+            it('deactivates the scope that was activated when the matched node first matched the node matcher', () => {
                 let didDeactivateScope = false;
 
                 Decl.select('[data-match-me]', (scope) => {
@@ -233,7 +233,7 @@ describe('Scope', () => {
             });
         });
 
-        context('when another element besides the matched element mutates to match the provided element matcher', () => {
+        context('when another node besides the matched node mutates to match the provided node matcher', () => {
             it('does *not* activate a new scope with the provided scope executor', () => {
                 let didActivateScope = false;
 
@@ -256,7 +256,7 @@ describe('Scope', () => {
 
     describe('#on', () => {
         context('when a matching event occurs', () => {
-            context('on the matched element', () => {
+            context('on the matched node', () => {
                 it('runs the executor', () => {
                     let didRunExecutor = false;
 
@@ -274,7 +274,7 @@ describe('Scope', () => {
                 });
             });
 
-            context('on another element besides the matched element', () => {
+            context('on another node besides the matched node', () => {
                 it('does *not* run the executor', () => {
                     let didRunExecutor = false;
 
@@ -294,7 +294,7 @@ describe('Scope', () => {
         });
 
         context('when a non-matching event occurs', () => {
-            context('on the matched element', () => {
+            context('on the matched node', () => {
                 it('does *not* run the executor', () => {
                     let didRunExecutor = false;
 
@@ -312,7 +312,7 @@ describe('Scope', () => {
                 });
             });
 
-            context('on another element besides the matched element', () => {
+            context('on another node besides the matched node', () => {
                 it('does *not* run the executor', () => {
                     let didRunExecutor = false;
 
@@ -334,10 +334,10 @@ describe('Scope', () => {
 });
 
 function setAttribute(selector : string, attributeName: string, attribueValue: string) {
-    let element = document.querySelector(selector);
+    let node = document.querySelector(selector);
 
-        if(element) {
-        element.setAttribute(attributeName, attribueValue);
+        if(node) {
+        node.setAttribute(attributeName, attribueValue);
         return waitForRepaint();
     }else{
         return Promise.reject('Cannot change attribue ' + attributeName + ' of ' + selector + ' to ' + attribueValue);
@@ -345,10 +345,10 @@ function setAttribute(selector : string, attributeName: string, attribueValue: s
 }
 
 function setContent(selector : string, htmlContent : string): Promise<any> {
-    let element = document.querySelector(selector);
+    let node = document.querySelector(selector);
 
-    if(element) {
-        element.innerHTML = htmlContent;
+    if(node) {
+        node.innerHTML = htmlContent;
         return waitForRepaint();
     }else{
         return Promise.reject('Cannot set content of ' + selector);
@@ -356,13 +356,13 @@ function setContent(selector : string, htmlContent : string): Promise<any> {
 }
 
 function simulateEvent(selector : string, eventName : string): Promise<any> {
-    let element = document.querySelector(selector);
+    let node = document.querySelector(selector);
 
-    if(element) {
+    if(node) {
         let event = document.createEvent('Events');
         event.initEvent(eventName, true, true);
 
-        element.dispatchEvent(event);
+        node.dispatchEvent(event);
 
         return waitForRepaint();
     }else{

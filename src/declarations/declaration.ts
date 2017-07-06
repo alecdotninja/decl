@@ -4,11 +4,11 @@ export { SubscriptionExecutor };
 
 export abstract class Declaration {
     protected isActivated: boolean = false;
-    protected readonly element: Element;
+    protected readonly node: Node;
     protected readonly subscription: Subscription;
 
-    constructor(element: Element) {
-        this.element = element;
+    constructor(node: Node) {
+        this.node = node;
     }
 
     activate(): void {

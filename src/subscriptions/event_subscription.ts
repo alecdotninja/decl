@@ -9,8 +9,8 @@ export class EventSubscription extends Subscription {
     private isConnected : boolean = false;    
     private readonly eventListener: EventListener;
 
-    constructor(element: Element, eventMatcher: EventMatcher, executor: SubscriptionExecutor) {
-        super(element, executor);
+    constructor(node: Node, eventMatcher: EventMatcher, executor: SubscriptionExecutor) {
+        super(node, executor);
 
         this.eventMatcher = eventMatcher;
         this.eventNames = this.parseEventMatcher(this.eventMatcher);
@@ -25,7 +25,7 @@ export class EventSubscription extends Subscription {
             this.isConnected = true;
 
             for(let eventName of this.eventNames) {
-                this.element.addEventListener(eventName, this.eventListener, false);
+                this.node.addEventListener(eventName, this.eventListener, false);
             }
         }
     }
@@ -33,7 +33,7 @@ export class EventSubscription extends Subscription {
     disconnect(): void {
         if(this.isConnected) {
             for(let eventName of this.eventNames) {
-                this.element.removeEventListener(eventName, this.eventListener, false);
+                this.node.removeEventListener(eventName, this.eventListener, false);
             }            
 
             this.isConnected = false;
@@ -41,7 +41,7 @@ export class EventSubscription extends Subscription {
     }
 
     private handleEvent(event: Event): void {
-        this.executor(event, this.element);         
+        this.executor(event, this.node);         
     }
 
     private parseEventMatcher(eventMatcher: EventMatcher): string[] {

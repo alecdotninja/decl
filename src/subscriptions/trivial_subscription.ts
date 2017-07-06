@@ -7,14 +7,14 @@ export interface TrivialSubscriptionConfiguration {
     disconnected?: boolean
 }
 
-export class ElementConnectionChangedEvent extends SubscriptionEvent {
-    readonly element: Element;
+export class NodeConnectionChangedEvent extends SubscriptionEvent {
+    readonly node: Node;
     readonly isConnected: boolean;
 
-    constructor(trivialSubscription: TrivialSubscription, element: Element, isConnected: boolean) {
-        super(trivialSubscription, 'ElementConnected');
+    constructor(trivialSubscription: TrivialSubscription, node: Node, isConnected: boolean) {
+        super(trivialSubscription, 'NodeConnected');
 
-        this.element = element;
+        this.node = node;
         this.isConnected = isConnected;
     }
 }
@@ -23,8 +23,8 @@ export class TrivialSubscription extends Subscription {
     private isConnected: boolean = false;
     private config: TrivialSubscriptionConfiguration;
 
-    constructor(element: Element, config: TrivialSubscriptionConfiguration, executor: SubscriptionExecutor) {
-        super(element, executor);
+    constructor(node: Node, config: TrivialSubscriptionConfiguration, executor: SubscriptionExecutor) {
+        super(node, executor);
 
         this.config = config;
     }
@@ -34,7 +34,7 @@ export class TrivialSubscription extends Subscription {
             this.isConnected = true;
 
             if(this.config.connected) {
-                this.executor(this.buildElementConnectionChangedEvent(), this.element); 
+                this.executor(this.buildNodeConnectionChangedEvent(), this.node); 
             }
         }
     }
@@ -44,12 +44,12 @@ export class TrivialSubscription extends Subscription {
             this.isConnected = false;
 
             if(this.config.disconnected) {
-                this.executor(this.buildElementConnectionChangedEvent(), this.element);     
+                this.executor(this.buildNodeConnectionChangedEvent(), this.node);     
             }
         }
     }
     
-    private buildElementConnectionChangedEvent(): ElementConnectionChangedEvent {
-        return new ElementConnectionChangedEvent(this, this.element, this.isConnected);
+    private buildNodeConnectionChangedEvent(): NodeConnectionChangedEvent {
+        return new NodeConnectionChangedEvent(this, this.node, this.isConnected);
     }
 }

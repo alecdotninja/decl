@@ -1,26 +1,26 @@
-import { ScopeTrackingDeclaration, ElementMatcher, ScopeExecutor } from './scope_tracking_declaration';
-import { MatchingElementsSubscription, MatchingElementsChangedEvent } from '../subscriptions/matching_elements_subscription';
+import { ScopeTrackingDeclaration, NodeMatcher, ScopeExecutor } from './scope_tracking_declaration';
+import { MatchingNodesSubscription, MatchingNodesChangedEvent } from '../subscriptions/matching_nodes_subscription';
 
-export { ElementMatcher, ScopeExecutor };
+export { NodeMatcher, ScopeExecutor };
 
 export class SelectDeclaration extends ScopeTrackingDeclaration {
-    protected subscription: MatchingElementsSubscription;
-    protected matcher: ElementMatcher;
+    protected subscription: MatchingNodesSubscription;
+    protected matcher: NodeMatcher;
     protected executor: ScopeExecutor;
 
-    constructor(element: Element, matcher: ElementMatcher, executor: ScopeExecutor) {
-        super(element);
+    constructor(node: Node, matcher: NodeMatcher, executor: ScopeExecutor) {
+        super(node);
 
         this.matcher = matcher;
         this.executor = executor;
 
-        this.subscription = new MatchingElementsSubscription(this.element, this.matcher, (event: MatchingElementsChangedEvent) => {
-            for(let element of event.addedElements) {
-                this.addChildScopeByElement(element, this.executor);
+        this.subscription = new MatchingNodesSubscription(this.node, this.matcher, (event: MatchingNodesChangedEvent) => {
+            for(let node of event.addedNodes) {
+                this.addChildScopeByNode(node, this.executor);
             }
 
-            for(let element of event.removedElements) {
-                this.removeChildScopeByElement(element);
+            for(let node of event.removedNodes) {
+                this.removeChildScopeByNode(node);
             }
         });
     }

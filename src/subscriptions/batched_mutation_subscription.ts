@@ -21,8 +21,8 @@ export abstract class BatchedMutationSubscription extends Subscription {
     private readonly mutationCallback: MutationCallback;
     private readonly mutationObserver: MutationObserver;
 
-    constructor(element: Element, executor: SubscriptionExecutor) {
-        super(element, executor);
+    constructor(node: Node, executor: SubscriptionExecutor) {
+        super(node, executor);
 
         this.mutationCallback = (): void => {
             this.deferHandleMutations();
@@ -33,7 +33,7 @@ export abstract class BatchedMutationSubscription extends Subscription {
 
     protected startListening(): void {
         if(!this.isListening) {
-            this.mutationObserver.observe(this.element, BatchedMutationSubscription.mutationObserverInit);
+            this.mutationObserver.observe(this.node, BatchedMutationSubscription.mutationObserverInit);
 
             this.isListening = true;
         }
