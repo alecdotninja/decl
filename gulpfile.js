@@ -71,42 +71,77 @@ gulp.task('ci', function() {
     })
     .then(function() {
         var customLaunchers = {
-                sl_chrome: {
-                    base: 'SauceLabs',
-                    browserName: 'chrome'
-                },
-                sl_firefox: {
-                    base: 'SauceLabs',
-                    browserName: 'firefox'
-                },
-                sl_mac_safari: {
-                    base: 'SauceLabs',
-                    browserName: 'safari',
-                    platform: 'OS X 10.10'
-                },
-                sl_ie_9: {
-                    base: 'SauceLabs',
-                    browserName: 'internet explorer',
-                    platform: 'Windows 7',
-                    version: '9'
-                },
-                sl_ie_10: {
-                    base: 'SauceLabs',
-                    browserName: 'internet explorer',
-                    platform: 'Windows 8',
-                    version: '10'
-                },
-                sl_ie_11: {
-                    base: 'SauceLabs',
-                    browserName: 'internet explorer',
-                    platform: 'Windows 8.1',
-                    version: '11'
-                },
-                sl_edge: {
-                    base: 'SauceLabs',
-                    browserName: 'MicrosoftEdge',
-                    platform: 'Windows 10'
-                },
+            sl_chrome: {
+                base: 'SauceLabs',
+                browserName: 'chrome',
+                platform: 'Linux'
+            },
+            sl_firefox: {
+                base: 'SauceLabs',
+                browserName: 'firefox',
+                platform: 'Linux'
+            },
+            sl_mac_safari: {
+                base: 'SauceLabs',
+                browserName: 'safari',
+                platform: 'OS X 10.10'
+            }
+        };
+
+        return karma({
+            configFile: __dirname + '/karma.conf.js', 
+            singleRun: true,
+            concurrency: 1,
+            reporters: ['mocha', 'saucelabs'],            
+            browsers: Object.keys(customLaunchers),
+            customLaunchers: customLaunchers,
+            sauceLabs: {
+                testName: 'Decl tests (Modern Desktop)',
+                build: process.env.TRAVIS_BUILD_NUMBER || process.env.SAUCE_BUILD_ID || Date.now()
+            },
+            captureTimeout: 300000,
+            browserNoActivityTimeout: 300000
+        });
+    })
+    .then(function() {
+        var customLaunchers = {
+            sl_ie_9: {
+                base: 'SauceLabs',
+                browserName: 'internet explorer',
+                platform: 'Windows 7',
+                version: '9'
+            },
+            sl_ie_10: {
+                base: 'SauceLabs',
+                browserName: 'internet explorer',
+                platform: 'Windows 8',
+                version: '10'
+            },
+            sl_ie_11: {
+                base: 'SauceLabs',
+                browserName: 'internet explorer',
+                platform: 'Windows 8.1',
+                version: '11'
+            }
+        };
+
+        return karma({
+            configFile: __dirname + '/karma.conf.js', 
+            singleRun: true,
+            concurrency: 1,
+            reporters: ['mocha', 'saucelabs'],            
+            browsers: Object.keys(customLaunchers),
+            customLaunchers: customLaunchers,
+            sauceLabs: {
+                testName: 'Decl tests (Legacy)',
+                build: process.env.TRAVIS_BUILD_NUMBER || process.env.SAUCE_BUILD_ID || Date.now()
+            },
+            captureTimeout: 300000,
+            browserNoActivityTimeout: 300000
+        });
+    })
+    .then(function() {
+        var customLaunchers = {
                 sl_ios_safari_8: {
                     base: 'SauceLabs',
                     browserName: 'iphone',
@@ -128,16 +163,16 @@ gulp.task('ci', function() {
                     version: '5.1'
                 }
         };
-        
+
         return karma({
             configFile: __dirname + '/karma.conf.js', 
             singleRun: true,
-            concurrency: 3,
+            concurrency: 1,
             reporters: ['mocha', 'saucelabs'],            
             browsers: Object.keys(customLaunchers),
             customLaunchers: customLaunchers,
             sauceLabs: {
-                testName: 'Decl tests (Desktop)',
+                testName: 'Decl tests (Mobile)',
                 build: process.env.TRAVIS_BUILD_NUMBER || process.env.SAUCE_BUILD_ID || Date.now(),
                 connectOptions: {
                         'no-ssl-bump-domains': 'all' // Ignore SSL error on Android emulator
