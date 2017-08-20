@@ -1,9 +1,9 @@
-import { BatchedMutationSubscription, SubscriptionExecutor, SubscriptionEvent } from './batched_mutation_subscription';
+import { DocumentMutationSubscription, SubscriptionExecutor, SubscriptionEvent } from './document_mutation_subscription';
 import { NodeMatcher, NodeCollector } from '../node_collector';
 
 export { NodeMatcher };
 
-export class MatchingNodesSubscription extends BatchedMutationSubscription {
+export class MatchingNodesSubscription extends DocumentMutationSubscription {
     readonly matcher: NodeMatcher;
 
     private isConnected: boolean = false;
