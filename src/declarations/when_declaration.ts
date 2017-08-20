@@ -24,7 +24,7 @@ export class WhenDeclaration extends ScopeTrackingDeclaration {
     }
 
     inspect(includeSource?: boolean): void {
-        (<any>console.groupCollapsed)('when', this.matcher);
+        console.groupCollapsed('when', this.matcher);
 
         try{
             this.inspectChildScopes(includeSource);        

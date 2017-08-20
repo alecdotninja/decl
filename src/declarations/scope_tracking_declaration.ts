@@ -60,7 +60,7 @@ export abstract class ScopeTrackingDeclaration extends Declaration {
         for(let childScope of this.childScopes) {
             if(childScope.getNode() === node) {
                 this.removeChildScope(childScope);
-                return; // loop must exist to avoid data-race
+                return; // loop must exit to avoid data-race
             }
         }
     }

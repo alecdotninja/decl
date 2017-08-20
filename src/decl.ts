@@ -36,6 +36,14 @@ export class Decl {
         }
     }
 
+    static activate(): void {
+        return this.getDefaultInstance().activate();
+    }
+
+    static deactivate(): void {
+        return this.getDefaultInstance().deactivate();        
+    }
+
     private scope: Scope;
 
     constructor(root: Node) {
@@ -66,6 +74,14 @@ export class Decl {
 
     pristine(): void {
         this.scope.pristine();
+    }
+
+    activate(): void {
+        this.scope.activate();        
+    }
+
+    deactivate(): void {        
+        this.scope.deactivate();
     }
 }
 

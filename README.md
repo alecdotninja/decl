@@ -7,7 +7,7 @@ Decl is a simple library designed to enable more declarative and unobtrusive Jav
 
 ## Browser Support
 
-Decl should work on any modern browser and most older browsers (provided that they support either `MutationObserver` or the long depricated `MutationEvent` API); however it is actively tested against the browsers below.
+Decl should work on any modern browser and most older browsers (provided that they can be polyfilled to support `MutationObserver`); however it is actively tested against the browsers below.
 
 [![Sauce Test Status](https://saucelabs.com/browser-matrix/decl.svg)](https://saucelabs.com/u/decl)
 
@@ -119,6 +119,31 @@ Instances of `Decl` must be tied to a document and create a root scope for the r
 #### `Decl#pristine`
 `pristine` resets this decl object to it's initial state fully cleaning up all scopes it contains in the process.
 
+#### `Decl#deactivate`
+`deactivate` causes all rules to unmatch and returns the document to its original state.
+
+#### `Decl#activate`
+`activate` reverses the effects of `deactivate` by re-applying any matching rules.
+
+
+
+## Turbolinks 5 Compatability
+
+Tubolinks 5 introduces a caching mechanism that works by taking a snapshot of the page. Since this snapshot does not include the event handlers and jQuery data for elements on the page, it will often leave interactive components of the page in a bad state.
+
+One solution to this problem is to deactivate Decl before the snapshot is taken. This will cause the unmatch callbacks for any rules to run and place the page back into its pristine state.
+
+```javascript
+// Deactivate Decl before the snapshot is taken
+document.addEventListener('turbolinks:before-cache', function() {
+  Decl.deactivate();
+}, false);
+
+// Reactivate Decl after the snapshot is taken
+document.addEventListener('turbolinks:render', function() {
+  Decl.activate();
+}, false);
+```
 
 ## Development
 

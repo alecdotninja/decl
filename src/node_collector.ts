@@ -1,10 +1,15 @@
-export interface NodeVistor { (node: Node): NodeMatcher | boolean }
-export declare type NodeMatcher = string | NodeListOf<Node> | Node[] | NodeVistor;
+export interface NodeVisitor { (node: Node): NodeMatcher | boolean }
+export declare type NodeMatcher = string | NodeListOf<Node> | Node[] | NodeVisitor;
 
 export class NodeCollector {
     private static instance: NodeCollector;
     
-    private static readonly ELEMENT_MATCHER_TYPE_ERROR_MESSAGE = "Decl: An `NodeMatcher` must be a CSS selector (string) or a function which takes a node under consideration and returns a CSS selector (string) that matches all matching nodes in the subtree, an array-like object of matching nodes in the subtree, or a boolean value as to whether the node should be included (in this case, the function will be invoked again for all children of the node).";
+    private static readonly NODE_MATCHER_TYPE_ERROR_MESSAGE = 
+        "Decl: A `NodeMatcher` must be a CSS selector (string) or a function which takes "  +
+        "a node under consideration and returns a CSS selector (string) that matches all "  + 
+        "matching nodes in the subtree, an array-like object of matching nodes in the "     + 
+        "subtree, or a boolean value as to whether the node should be included (in this "   +
+        "case, the function will be invoked again for all children of the node).";
 
     static isMatchingNode(rootNode: Node, nodeMatcher: NodeMatcher): boolean {
         return this.getInstance().isMatchingNode(rootNode, nodeMatcher);
@@ -21,7 +26,7 @@ export class NodeCollector {
     isMatchingNode(node: Node, nodeMatcher: NodeMatcher): boolean {
         switch(typeof(nodeMatcher)) {
             default:
-                throw new TypeError(NodeCollector.ELEMENT_MATCHER_TYPE_ERROR_MESSAGE);
+                throw new TypeError(NodeCollector.NODE_MATCHER_TYPE_ERROR_MESSAGE);
                 
             case 'string':
                 let cssSelector: string = <string>nodeMatcher;
@@ -32,7 +37,7 @@ export class NodeCollector {
                 return this.isMatchingNodeFromObject(node, object);
                 
             case 'function':
-                let nodeVistor = <NodeVistor>nodeMatcher;
+                let nodeVistor = <NodeVisitor>nodeMatcher;
                 return this.isMatchingNodeFromNodeVistor(node, nodeVistor);       
         }
     }
@@ -40,7 +45,7 @@ export class NodeCollector {
     collectMatchingNodes(node: Node, nodeMatcher: NodeMatcher): Node[] {
         switch(typeof(nodeMatcher)) {
             default:
-                throw new TypeError(NodeCollector.ELEMENT_MATCHER_TYPE_ERROR_MESSAGE);
+                throw new TypeError(NodeCollector.NODE_MATCHER_TYPE_ERROR_MESSAGE);
                 
             case 'string':
                 let cssSelector: string = <string>nodeMatcher;
@@ -51,7 +56,7 @@ export class NodeCollector {
                 return this.collectMatchingNodesFromObject(node, object);
                 
             case 'function':
-                let nodeVistor = <NodeVistor>nodeMatcher;
+                let nodeVistor = <NodeVisitor>nodeMatcher;
                 return this.collectMatchingNodesFromNodeVistor(node, nodeVistor);       
         }
     }
@@ -74,15 +79,15 @@ export class NodeCollector {
                 if(arrayLike.length === 0 || arrayLike[0] instanceof Node) {
                     return isMemberOfArrayLike(arrayLike, node);                
                 }else{
-                    throw new TypeError(NodeCollector.ELEMENT_MATCHER_TYPE_ERROR_MESSAGE);
+                    throw new TypeError(NodeCollector.NODE_MATCHER_TYPE_ERROR_MESSAGE);
                 }
             }else{
-                throw new TypeError(NodeCollector.ELEMENT_MATCHER_TYPE_ERROR_MESSAGE);
+                throw new TypeError(NodeCollector.NODE_MATCHER_TYPE_ERROR_MESSAGE);
             }
         }
     }
 
-    private isMatchingNodeFromNodeVistor(node: Node, nodeVistor: NodeVistor): boolean {
+    private isMatchingNodeFromNodeVistor(node: Node, nodeVistor: NodeVisitor): boolean {
         let visitorResult = nodeVistor(node);
 
         if(typeof(visitorResult) === 'boolean') {
@@ -112,15 +117,15 @@ export class NodeCollector {
                 if(arrayLike.length === 0 || arrayLike[0] instanceof Node) {
                     return toArray<Node>(arrayLike);                
                 }else{
-                    throw new TypeError(NodeCollector.ELEMENT_MATCHER_TYPE_ERROR_MESSAGE);
+                    throw new TypeError(NodeCollector.NODE_MATCHER_TYPE_ERROR_MESSAGE);
                 }
             }else{
-                throw new TypeError(NodeCollector.ELEMENT_MATCHER_TYPE_ERROR_MESSAGE);
+                throw new TypeError(NodeCollector.NODE_MATCHER_TYPE_ERROR_MESSAGE);
             }
         }
     }
 
-    private collectMatchingNodesFromNodeVistor(node: Node, nodeVistor: NodeVistor): Node[] {
+    private collectMatchingNodesFromNodeVistor(node: Node, nodeVistor: NodeVisitor): Node[] {
         let nodes: Node[] = [];
         let childNodes = node.childNodes;
         

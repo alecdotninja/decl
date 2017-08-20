@@ -18,7 +18,7 @@ export class OnDeclaration extends Declaration {
     }
 
     inspect(): void {
-        (<any>console.groupCollapsed)('on', this.matcher);
+        console.groupCollapsed('on', this.matcher);
 
         try {
             console.log(this.executor);

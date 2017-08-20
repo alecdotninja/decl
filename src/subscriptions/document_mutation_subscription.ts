@@ -1,12 +1,5 @@
 import { Subscription, SubscriptionExecutor, SubscriptionEvent } from './subscription';
 
-interface CommonJsRequire {
-    (id: string): any;
-}
-
-declare var require: CommonJsRequire;
-let MutationObserver = require('mutation-observer'); // use polyfill
-
 export abstract class DocumentMutationSubscription extends Subscription {
     static readonly mutationObserverInit: MutationObserverInit = {
         childList: true,

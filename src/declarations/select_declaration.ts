@@ -26,7 +26,7 @@ export class SelectDeclaration extends ScopeTrackingDeclaration {
     }
 
     inspect(includeSource?: boolean): void {
-        (<any>console.groupCollapsed)('select', this.matcher);
+        console.groupCollapsed('select', this.matcher);
 
         try{
             this.inspectChildScopes(includeSource);        

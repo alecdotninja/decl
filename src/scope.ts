@@ -50,7 +50,7 @@ export class Scope {
     }
 
     inspect(includeSource?: boolean): void {
-        (<any>console.groupCollapsed)(this.node);
+        console.groupCollapsed('<<', this.node, '>>');
 
         try {
             if(includeSource) {

@@ -41,17 +41,17 @@
     //<![CDATA[
     window.onload = function () {
       Decl.select('.expandable-row', function (scope, expandableRow) {
-        var expandableRowclassList = expandableRow.classList;
+        var expandableRowClassList = expandableRow.classList;
 
         scope.when(':not(.expanded)', function (scope) {
           scope.on('click', '.expandable-row-handle', function () {
-            expandableRowclassList.add('expanded');
+            expandableRowClassList.add('expanded');
           });
         });
 
         scope.when('.expanded', function (scope) {
           scope.on('click', '.expandable-row-handle', function () {
-            expandableRowclassList.remove('expanded');
+            expandableRowClassList.remove('expanded');
           });
         });
       });
