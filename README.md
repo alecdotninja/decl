@@ -16,14 +16,14 @@ I've tried to select a diverse range of browsers and platforms for maximum cover
 
 ## Usage
 
-Decl is designed to be intuitive and reminiscent of SCSS. To get an intuition for how Decl works, checkout [this Fiddle](https://jsfiddle.net/wtzp3xz1/) which shows a simple implementation for the accordion effect.
+Decl is designed to be intuitive and reminiscent of SCSS. To get an intuition for how Decl works, check out [this Fiddle](https://jsfiddle.net/wtzp3xz1/) which shows a simple implementation for the accordion effect.
 
 ### Scopes
 
 Scopes are the central idea in Decl. A scope is a combination of some element and rules to be matched to that element. By default, the global `Decl` behaves like a scope for the root of the document (`document.documentElement`).
 
 #### Select Rules
-Select rules can be created on a scope by calling `select` with a matcher (usually a CSS selector string) and callback function. The select rule will match any child of the scope's element that matches the mater, and the callback will be invoked with a new scope for any element that matches the select rule.
+Select rules can be created on a scope by calling `select` with a matcher (usually a CSS selector string) and callback function. The select rule will match any child of the scope's element that matches the matcher, and the callback will be invoked with a new scope for any element that matches the select rule.
 
 ```javascript
 Decl.select('.kitten', function(scope, kitten) {
@@ -37,7 +37,7 @@ Decl.select('.kitten', function(scope, kitten) {
 ```
 
 #### When Rules
-When rules are like select rules except they are created by calling `when` on a scope and apply to the element itself rather than the children.
+When rules are like select rules except they are created by calling `when` on a scope and applied to the element itself rather than the children.
 
 ```javascript
 Decl.select('.kitten', function(scope, kitten) {  
@@ -75,7 +75,7 @@ Decl.select('.kitten.playful', function(scope) {
 ```
 
 #### Event Rules
-Event rules allow you to define behavior for the occurrence of a DOM event on an element of a particular scope. They can be created by calling on `on` on a scope with an event matcher (usually a string with the event name) and a callback to be invoked when a matching event occurs. The callback will receive the matching event and a reference to the underlying element to which the listener was attached.
+Event rules allow you to define behavior for the occurrence of a DOM event on an element of a particular scope. They can be created by calling `on` on a scope with an event matcher (usually a string with the event name) and a callback to be invoked when a matching event occurs. The callback will receive the matching event and a reference to the underlying element to which the listener was attached.
 
 ```javascript
 Decl.select('.kitten', function(scope) {
@@ -100,7 +100,7 @@ Decl.select('.kitten', function(scope) {
 
 ### The global `Decl` object
 
-The global `Decl` object is a constructor for instances of the `Decl` class. It delegates all but a few of it's methods to a default instance. Additionally, this default instance delegates `select` and `on` to a root scope. This is what allows the global `Decl` object to be used as the starting point for constructing new scopes.
+The global `Decl` object is a constructor for instances of the `Decl` class. It delegates all but a few of its methods to a default instance. Additionally, this default instance delegates `select` and `on` to a root scope. This is what allows the global `Decl` object to be used as the starting point for constructing new scopes.
 
 Instances of `Decl` must be tied to a document and create a root scope for the root element of that document (the `documentElement` of that document). At initialization, the default instance is configured for a decl with the document in the global `document` reference; however, additional decls for other documents may be created and set as the default instance.
 
@@ -117,7 +117,7 @@ Instances of `Decl` must be tied to a document and create a root scope for the r
 `inspect` prints the current state of the decl object to the console. This may be useful for debugging.
 
 #### `Decl#pristine`
-`pristine` resets this decl object to it's initial state fully cleaning up all scopes it contains in the process.
+`pristine` resets this decl object to its initial state, fully cleaning up all scopes it contains in the process.
 
 #### `Decl#deactivate`
 `deactivate` causes all rules to unmatch and returns the document to its original state.
