@@ -16,7 +16,7 @@ I've tried to select a diverse range of browsers and platforms for maximum cover
 
 ## Usage
 
-Decl is designed to be intuitive and reminiscent of SCSS. To get an intuition for how Decl works, check out [this Fiddle](https://jsfiddle.net/wtzp3xz1/) which shows a simple implementation for the accordion effect.
+Decl is designed to be intuitive and reminiscent of SCSS. To get an intuition for how Decl works, check out [this Fiddle](https://jsfiddle.net/wdvfghty/) which shows a simple implementation for the accordion effect.
 
 ### Scopes
 
